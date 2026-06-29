@@ -1,7 +1,6 @@
 # CoNa Adventures — Next.js
 
-A full-featured adventure travel site for DR Congo and Namibia expeditions, converted from a single HTML file into a clean Next.js project.
-
+A full-featured adventure travel site for DR Congo and Namibia expeditions.
 ## Project Structure
 
 ```
