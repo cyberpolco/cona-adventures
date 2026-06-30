@@ -1,7 +1,9 @@
 // components/pages/SuccessPage.js
+import { useRouter } from 'next/router';
 import { useApp } from '../../context/AppContext';
 
 export default function SuccessPage() {
+  const router = useRouter();
   const { t, booking, showPage } = useApp();
 
   const ref      = booking?.ref      ?? 'CNA-00000';
@@ -69,7 +71,7 @@ export default function SuccessPage() {
 
         <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
           <button className="btn btn-primary" onClick={() => showPage('home')}>{t('backHome')}</button>
-          <button className="btn btn-outline" onClick={() => showPage('dashboard')}>{t('viewDash')}</button>
+          <button className="btn btn-outline" onClick={() => router.push('/dashboard')}>{t('viewDash')}</button>
         </div>
       </div>
     </div>

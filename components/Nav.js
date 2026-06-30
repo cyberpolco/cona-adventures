@@ -1,9 +1,11 @@
 // components/Nav.js
+import { useSession, signOut } from 'next-auth/react';
 import { useApp } from '../context/AppContext';
 import LogoSeal from './LogoSeal';
 
 export default function Nav() {
-  const { t, lang, setLang, page, showPage, openLogin, loginUser } = useApp();
+  const { t, lang, setLang, page, showPage, openLogin } = useApp();
+  const { data: session } = useSession();
 
   return (
     <nav className="nav">
@@ -86,9 +88,13 @@ export default function Nav() {
             FR
           </button>
         </div>
-        <button className="btn-login" onClick={openLogin}>
-          {loginUser ? `⚑ ${loginUser.username}` : '⚑ Login'}
-        </button>
+        {session ? (
+          <button className="btn-login" onClick={() => signOut({ callbackUrl: '/' })}>
+            ⚑ {session.user?.name?.split(' ')[0] || 'Sign out'} · Logout
+          </button>
+        ) : (
+          <button className="btn-login" onClick={openLogin}>⚑ Login</button>
+        )}
       </div>
     </nav>
   );

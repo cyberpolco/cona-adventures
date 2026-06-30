@@ -16,7 +16,6 @@ import TripPlannerPage from '../components/pages/TripPlannerPage';
 import ItineraryPage  from '../components/pages/ItineraryPage';
 import PaymentPage    from '../components/pages/PaymentPage';
 import SuccessPage    from '../components/pages/SuccessPage';
-import DashboardPage  from '../components/pages/DashboardPage';
 
 const PAGE_MAP = {
   home:       HomePage,
@@ -26,14 +25,13 @@ const PAGE_MAP = {
   itinerary:  ItineraryPage,
   payment:    PaymentPage,
   success:    SuccessPage,
-  dashboard:  DashboardPage,
 };
 
 export default function App() {
   const { page } = useApp();
 
   const ActivePage = PAGE_MAP[page] ?? HomePage;
-  const showFooter = !['dashboard'].includes(page);
+  const showFooter = true;
 
   return (
     <>

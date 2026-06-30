@@ -8,7 +8,6 @@ export function AppProvider({ children }) {
   const [lang, setLangState] = useState('en');
   const [page, setPage] = useState('home'); // home | gallery | contact | planner | itinerary | payment | success | dashboard
   const [loginOpen, setLoginOpen] = useState(false);
-  const [loginUser, setLoginUser] = useState(null); // { username, role }
   const [tripData, setTripData] = useState(null);   // built by planner
   const [toast, setToast] = useState(null);
 
@@ -31,7 +30,6 @@ export function AppProvider({ children }) {
       lang, setLang: setLangState, t,
       page, showPage,
       loginOpen, openLogin, closeLogin,
-      loginUser, setLoginUser,
       tripData, setTripData,
       booking, setBooking,
       toast, showToast,

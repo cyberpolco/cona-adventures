@@ -1,5 +1,6 @@
 // components/pages/DashboardPage.js
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import { useApp } from '../../context/AppContext';
 
 const BOOKINGS = [
@@ -43,6 +44,7 @@ const INIT_USERS = [
 const ROLE_OPTIONS = ['Operations Manager', 'Tour Guide', 'Driver', 'Hotel Partner', 'Immigration Officer'];
 
 export default function DashboardPage() {
+  const router = useRouter();
   const { t, showPage } = useApp();
   const [tab, setTab] = useState('overview');
   const [role, setRole] = useState('Super Admin');
@@ -92,7 +94,7 @@ export default function DashboardPage() {
             </div>
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <button className="btn btn-outline" onClick={() => showPage('home')} style={{ fontSize: '0.75rem' }}>
+            <button className="btn btn-outline" onClick={() => router.push('/')} style={{ fontSize: '0.75rem' }}>
               {t('publicSite')}
             </button>
             <select
