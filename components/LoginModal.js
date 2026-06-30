@@ -29,8 +29,9 @@ function SignInForm({ onSignup }) {
     const session = await getSession();          // role is decided by the server
     const role = session?.user?.role;
     closeLogin();
-    if (role === 'Super Admin' || role === 'Operations Manager') {
-      router.push('/dashboard');                 // staff → real, guarded route
+    const STAFF = ['Super Admin', 'Operations Manager', 'Tour Guide', 'Driver'];
+    if (STAFF.includes(role)) {
+      router.push('/dashboard');                 // all staff → guarded dashboard
     } else {
       showToast(`Welcome back, ${session?.user?.name?.split(' ')[0] || ''}.`);
     }

@@ -1,14 +1,16 @@
 // components/Footer.js
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useApp } from '../context/AppContext';
 import LogoSeal from './LogoSeal';
+
+const STAFF_ROLES = ['Super Admin', 'Operations Manager', 'Tour Guide', 'Driver'];
 
 export default function Footer() {
   const { showPage, openLogin } = useApp();
   const { data: session } = useSession();
   const router = useRouter();
-  const isAdmin = session?.user?.role === 'Super Admin';
+  const isStaff = STAFF_ROLES.includes(session?.user?.role);
 
   return (
     <footer className="footer">
@@ -21,21 +23,19 @@ export default function Footer() {
       </div>
 
       <div className="footer-links">
-        <a onClick={() => showPage('home')} role="button" tabIndex={0}>Home</a>
+        <a onClick={() => showPage('home')}    role="button" tabIndex={0}>Home</a>
         <a onClick={() => showPage('gallery')} role="button" tabIndex={0}>Gallery</a>
         <a onClick={() => showPage('planner')} role="button" tabIndex={0}>Plan Trip</a>
         <a onClick={() => showPage('contact')} role="button" tabIndex={0}>Contact</a>
-        {isAdmin ? (
+        <a onClick={openLogin}                 role="button" tabIndex={0}>Login</a>
+        {isStaff && (
           <a
             onClick={() => router.push('/dashboard')}
-            role="button"
-            tabIndex={0}
+            role="button" tabIndex={0}
             style={{ color: 'var(--gold)', fontWeight: 700 }}
           >
             ⚡ Dashboard
           </a>
-        ) : (
-          <a onClick={openLogin} role="button" tabIndex={0}>Login</a>
         )}
       </div>
 

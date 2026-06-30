@@ -1,44 +1,27 @@
 // components/Nav.js
 import { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { useApp } from '../context/AppContext';
 import LogoSeal from './LogoSeal';
+
+const STAFF_ROLES = ['Super Admin', 'Operations Manager', 'Tour Guide', 'Driver'];
 
 export default function Nav() {
   const { t, lang, setLang, page, showPage, openLogin } = useApp();
   const { data: session } = useSession();
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const isStaff = STAFF_ROLES.includes(session?.user?.role);
   const close = () => setMenuOpen(false);
 
   const links = [
-    {
-      label: t('navHome'),
-      action: () => { showPage('home'); close(); },
-      active: page === 'home',
-    },
-    {
-      label: t('navExp'),
-      action: () => {
-        showPage('home'); close();
-        setTimeout(() => document.getElementById('experiences')?.scrollIntoView({ behavior: 'smooth' }), 50);
-      },
-    },
-    {
-      label: t('navGallery'),
-      action: () => { showPage('gallery'); close(); },
-      active: page === 'gallery',
-    },
-    {
-      label: t('navPlan'),
-      action: () => { showPage('planner'); close(); },
-      active: page === 'planner',
-    },
-    {
-      label: t('navContact'),
-      action: () => { showPage('contact'); close(); },
-      active: page === 'contact',
-    },
+    { label: t('navHome'),    action: () => { showPage('home');    close(); }, active: page === 'home' },
+    { label: t('navExp'),     action: () => { showPage('home');    close(); setTimeout(() => document.getElementById('experiences')?.scrollIntoView({ behavior: 'smooth' }), 50); } },
+    { label: t('navGallery'), action: () => { showPage('gallery'); close(); }, active: page === 'gallery' },
+    { label: t('navPlan'),    action: () => { showPage('planner'); close(); }, active: page === 'planner' },
+    { label: t('navContact'), action: () => { showPage('contact'); close(); }, active: page === 'contact' },
   ];
 
   return (
@@ -51,9 +34,7 @@ export default function Nav() {
           style={{ background: 'none', border: 'none' }}
         >
           <LogoSeal size={44} />
-          <div className="logo-text cinzel">
-            CONA<span>ADVENTURES</span>
-          </div>
+          <div className="logo-text cinzel">CONA<span>ADVENTURES</span></div>
         </button>
 
         <div className="nav-links">
@@ -62,13 +43,22 @@ export default function Nav() {
               key={lk.label}
               onClick={lk.action}
               className={lk.active ? 'active' : ''}
-              role="button"
-              tabIndex={0}
+              role="button" tabIndex={0}
               onKeyDown={(e) => e.key === 'Enter' && lk.action()}
             >
               {lk.label}
             </a>
           ))}
+          {isStaff && (
+            <a
+              onClick={() => router.push('/dashboard')}
+              role="button" tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && router.push('/dashboard')}
+              style={{ color: 'var(--gold)', fontWeight: 700 }}
+            >
+              ⚡ Dashboard
+            </a>
+          )}
         </div>
 
         <div className="nav-right">
@@ -104,40 +94,32 @@ export default function Nav() {
                 key={lk.label}
                 onClick={lk.action}
                 className={lk.active ? 'active' : ''}
-                role="button"
-                tabIndex={0}
+                role="button" tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && lk.action()}
               >
                 {lk.label}
               </a>
             ))}
+            {isStaff && (
+              <a
+                onClick={() => { router.push('/dashboard'); close(); }}
+                role="button" tabIndex={0}
+                style={{ color: 'var(--gold)', fontWeight: 700 }}
+              >
+                ⚡ Dashboard
+              </a>
+            )}
             <hr className="mobile-divider" />
             <div className="mobile-lang">
-              <button
-                className={`lang-btn${lang === 'en' ? ' active' : ''}`}
-                style={{ flex: 1, borderRadius: 6, border: '1px solid var(--border)' }}
-                onClick={() => setLang('en')}
-              >EN</button>
-              <button
-                className={`lang-btn${lang === 'fr' ? ' active' : ''}`}
-                style={{ flex: 1, borderRadius: 6, border: '1px solid var(--border)' }}
-                onClick={() => setLang('fr')}
-              >FR</button>
+              <button className={`lang-btn${lang === 'en' ? ' active' : ''}`} style={{ flex: 1, borderRadius: 6, border: '1px solid var(--border)' }} onClick={() => setLang('en')}>EN</button>
+              <button className={`lang-btn${lang === 'fr' ? ' active' : ''}`} style={{ flex: 1, borderRadius: 6, border: '1px solid var(--border)' }} onClick={() => setLang('fr')}>FR</button>
             </div>
             {session ? (
-              <button
-                className="btn-login"
-                style={{ width: '100%', textAlign: 'center' }}
-                onClick={() => { signOut({ callbackUrl: '/' }); close(); }}
-              >
+              <button className="btn-login" style={{ width: '100%', textAlign: 'center' }} onClick={() => { signOut({ callbackUrl: '/' }); close(); }}>
                 ⚑ Logout
               </button>
             ) : (
-              <button
-                className="btn-login"
-                style={{ width: '100%', textAlign: 'center' }}
-                onClick={() => { openLogin(); close(); }}
-              >
+              <button className="btn-login" style={{ width: '100%', textAlign: 'center' }} onClick={() => { openLogin(); close(); }}>
                 ⚑ Login
               </button>
             )}
