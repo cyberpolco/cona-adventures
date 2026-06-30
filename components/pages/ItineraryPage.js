@@ -1,5 +1,6 @@
 // components/pages/ItineraryPage.js
 import { useApp } from '../../context/AppContext';
+import { estimatePrice } from '../../lib/pricing';
 
 function buildDays(tripData) {
   if (!tripData) return [];
@@ -25,15 +26,6 @@ function buildDays(tripData) {
   days.push({ day: dayNum++, icon: '🏡', title: 'Departure Day', desc: `Check-out and airport transfer. End of your CoNa Adventure.` });
 
   return days;
-}
-
-function estimatePrice(tripData) {
-  if (!tripData) return 0;
-  const { adults = 1, children = 0, experiences = [], country, accommodation } = tripData;
-  const basePP  = country === 'both' ? 3800 : 1400;
-  const expCost = experiences.length * 280;
-  const luxMult = accommodation === 'Luxury Lodge' ? 1.4 : accommodation === 'Eco Camp' ? 1.1 : 1;
-  return Math.round((basePP + expCost) * luxMult * (adults + children * 0.7));
 }
 
 export default function ItineraryPage() {

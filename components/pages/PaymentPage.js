@@ -1,35 +1,54 @@
 // components/pages/PaymentPage.js
+// SECURE checkout: no card fields are collected here. The browser sends the
+// trip selections to /api/checkout, the SERVER recomputes the amount, and (in
+// Phase 2) returns a hosted-checkout URL where the customer enters card details
+// on the provider's PCI-compliant page. Card data never touches this app.
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 
-const METHODS = ['💳 Credit Card', '🏦 Bank Transfer', '📱 Mobile Money'];
+const METHODS = ['💳 Card', '🏦 Bank Transfer', '📱 Mobile Money'];
 
 export default function PaymentPage() {
   const { t, booking, showPage, setBooking, showToast, tripData } = useApp();
 
-  const [payType, setPayType] = useState('full');  // full | deposit
+  const [payType, setPayType] = useState('full'); // full | deposit
   const [method, setMethod]   = useState(null);
-  const [cardName, setCardName] = useState('');
-  const [cardNum, setCardNum]   = useState('');
-  const [expCvv, setExpCvv]     = useState('');
+  const [busy, setBusy]       = useState(false);
 
-  const price    = booking?.price ?? 0;
-  const deposit  = Math.round(price * 0.4);
-  const dueNow   = payType === 'full' ? price : deposit;
-  const balance  = price - deposit;
+  // Display-only estimate (the charged amount is whatever the server returns).
+  const price   = booking?.price ?? 0;
+  const deposit = Math.round(price * 0.4);
+  const balance = price - deposit;
 
-  function handleConfirm() {
+  async function handleConfirm() {
     if (!method) { showToast('Please select a payment method.'); return; }
-    if (!cardName || !cardNum) { showToast('Please fill in payment details.'); return; }
+    setBusy(true);
+    try {
+      const r = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tripData, payType, method }),
+      });
+      const data = await r.json();
+      if (!r.ok || !data.ok) { showToast(data.error || 'Could not start checkout.'); setBusy(false); return; }
 
-    const ref = 'CNA-' + Math.floor(8000 + Math.random() * 1999);
-    const firstTraveler = tripData?.travelers?.[0];
-    const email = firstTraveler?.email || 'your@email.com';
-    const handle = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
-    const username = handle + '_' + Math.floor(100 + Math.random() * 900);
+      // Real gateway: redirect to Flutterwave's hosted checkout (card data
+      // is entered there, never here). Returns here via /payment/callback.
+      if (data.url) { window.location.href = data.url; return; }
 
-    setBooking((b) => ({ ...b, ref, email, username, payType, dueNow }));
-    showPage('success');
+      // Dev fallback (no FLW keys configured): keep the mock success flow.
+      const firstTraveler = tripData?.travelers?.[0];
+      const email = firstTraveler?.email || 'your@email.com';
+      const handle = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+      const username = handle + '_' + Math.floor(100 + Math.random() * 900);
+
+      // Trust the SERVER's figures, not the client's.
+      setBooking((b) => ({ ...b, ref: data.ref, price: data.price, email, username, payType, dueNow: data.dueNow }));
+      showPage('success');
+    } catch (e) {
+      showToast('Network error — please try again.');
+    }
+    setBusy(false);
   }
 
   return (
@@ -44,9 +63,7 @@ export default function PaymentPage() {
         <div
           className={`pay-option${payType === 'full' ? ' selected' : ''}`}
           onClick={() => setPayType('full')}
-          role="radio"
-          aria-checked={payType === 'full'}
-          tabIndex={0}
+          role="radio" aria-checked={payType === 'full'} tabIndex={0}
           onKeyDown={(e) => e.key === 'Enter' && setPayType('full')}
         >
           <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: 4 }}>{t('payFull')}</div>
@@ -63,9 +80,7 @@ export default function PaymentPage() {
         <div
           className={`pay-option${payType === 'deposit' ? ' selected' : ''}`}
           onClick={() => setPayType('deposit')}
-          role="radio"
-          aria-checked={payType === 'deposit'}
-          tabIndex={0}
+          role="radio" aria-checked={payType === 'deposit'} tabIndex={0}
           onKeyDown={(e) => e.key === 'Enter' && setPayType('deposit')}
         >
           <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: 4 }}>{t('payDeposit')}</div>
@@ -80,7 +95,7 @@ export default function PaymentPage() {
           )}
         </div>
 
-        {/* Payment method */}
+        {/* Payment method (the hosted gateway page collects the actual details) */}
         <div style={{ marginTop: 24 }}>
           <label className="form-label">{t('methodLabel')}</label>
           <div className="method-grid">
@@ -89,9 +104,7 @@ export default function PaymentPage() {
                 key={m}
                 className={`method-btn${method === m ? ' selected' : ''}`}
                 onClick={() => setMethod(m)}
-                role="radio"
-                aria-checked={method === m}
-                tabIndex={0}
+                role="radio" aria-checked={method === m} tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && setMethod(m)}
               >
                 {m}
@@ -99,19 +112,23 @@ export default function PaymentPage() {
             ))}
           </div>
 
-          <label className="form-label">{t('cardName')}</label>
-          <input type="text" placeholder="Full Name" value={cardName} onChange={(e) => setCardName(e.target.value)} style={{ marginBottom: 10 }} />
-
-          <label className="form-label">{t('cardNum')}</label>
-          <input type="text" placeholder="•••• •••• •••• ••••" value={cardNum} onChange={(e) => setCardNum(e.target.value)} style={{ marginBottom: 10 }} />
-
-          <label className="form-label">{t('expCvv')}</label>
-          <input type="text" placeholder="MM/YY · CVV" value={expCvv} onChange={(e) => setExpCvv(e.target.value)} style={{ marginBottom: 20 }} />
+          <div
+            style={{
+              display: 'flex', gap: 10, alignItems: 'flex-start',
+              background: 'rgba(46,138,138,0.08)', border: '1px solid var(--border)',
+              borderRadius: 10, padding: '12px 14px', marginTop: 6, fontSize: '0.8rem', color: 'var(--muted)',
+            }}
+          >
+            <span aria-hidden="true">🔒</span>
+            <span>You'll enter card or mobile-money details on our payment provider's secure page. CoNa never stores your card number.</span>
+          </div>
         </div>
 
         <div className="step-nav">
-          <button className="btn-back" onClick={() => showPage('itinerary')}>{t('back')}</button>
-          <button className="btn-next" onClick={handleConfirm}>{t('confirmBook')}</button>
+          <button className="btn-back" onClick={() => showPage('itinerary')} disabled={busy}>{t('back')}</button>
+          <button className="btn-next" onClick={handleConfirm} disabled={busy}>
+            {busy ? '…' : t('confirmBook')}
+          </button>
         </div>
       </div>
     </div>
