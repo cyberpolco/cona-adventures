@@ -1,9 +1,10 @@
 // pages/api/webhooks/flutterwave.js
-// The AUTHORITATIVE confirmation, independent of the browser redirect.
-// 1) reject any request whose verif-hash header != our dashboard secret hash
-// 2) re-verify the transaction server-side
-// 3) (DB) mark the booking paid — idempotently
+// Authoritative confirmation, independent of the browser redirect.
+// 1) Reject if verif-hash header doesn't match our dashboard secret.
+// 2) Re-verify the transaction server-side.
+// 3) Mark the booking paid — idempotently.
 import { webhookSignatureValid, verifyTransaction, expectedAmountFromMeta, paymentIsValid } from '../../../lib/flutterwave.server';
+import { markBookingPaid } from '../../../lib/bookings.server';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -12,7 +13,7 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Invalid signature' });
   }
 
-  // Acknowledge fast; do the work after. Flutterwave retries on non-200.
+  // Acknowledge fast; Flutterwave retries on non-200.
   res.status(200).json({ received: true });
 
   try {
@@ -22,11 +23,16 @@ export default async function handler(req, res) {
       const d = result?.data;
       const expected = { amount: expectedAmountFromMeta(d?.meta), currency: d?.currency };
       if (paymentIsValid(d, expected)) {
-        // ── DB SWAP-POINT: mark booking d.meta.cona_ref PAID (idempotent). ──
+        await markBookingPaid({
+          conaRef:       d.meta?.cona_ref || d.tx_ref,
+          txRef:         d.tx_ref,
+          transactionId: d.id,
+          amount:        d.amount,
+          currency:      d.currency,
+        });
       }
     }
   } catch (e) {
-    // already responded 200; log for reconciliation
     console.error('FLW webhook processing error', e);
   }
 }

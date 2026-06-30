@@ -1,5 +1,5 @@
 // components/pages/DashboardPage.js
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useApp } from '../../context/AppContext';
@@ -56,8 +56,29 @@ export default function DashboardPage() {
   const [newName, setNewName] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [createMsg, setCreateMsg] = useState(null);
+  const [dbBookings, setDbBookings] = useState(null);
 
-  const filteredBookings = BOOKINGS.filter((b) =>
+  useEffect(() => {
+    fetch('/api/bookings')
+      .then((r) => r.json())
+      .then((d) => { if (d.bookings) setDbBookings(d.bookings); })
+      .catch(() => {});
+  }, []);
+
+  const liveBookings = dbBookings
+    ? dbBookings.map((b) => ({
+        ref: b.ref,
+        guest: b.travelers?.[0]
+          ? `${b.travelers[0].firstName} ${b.travelers[0].lastName}`.trim()
+          : '—',
+        dest: b.country === 'drc' ? '🌿 Congo' : b.country === 'namibia' ? '🏜 Namibia' : b.country === 'both' ? '✦ Both' : b.country,
+        dates: new Date(b.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),
+        status: b.status === 'paid' ? 's-active' : b.status === 'pending' ? 's-pending' : 's-done',
+        statusLabel: b.status.charAt(0).toUpperCase() + b.status.slice(1),
+      }))
+    : BOOKINGS;
+
+  const filteredBookings = liveBookings.filter((b) =>
     !bookingSearch || [b.ref, b.guest, b.dest].some((v) => v.toLowerCase().includes(bookingSearch.toLowerCase()))
   );
   const filteredUsers = users.filter((u) =>
