@@ -1,6 +1,6 @@
 // components/pages/DashboardPage.js
 import { useState, useEffect } from 'react';
-import { signOut } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useApp } from '../../context/AppContext';
 
@@ -35,21 +35,34 @@ const CATALOGUE = [
 ];
 
 const INIT_USERS = [
-  { id: 1, name: 'Alice K.',   email: 'alice@cona.com',  username: 'alice_k',   role: 'Super Admin',   active: true },
-  { id: 2, name: 'Bruno M.',   email: 'bruno@cona.com',  username: 'bruno_m',   role: 'Ops Manager',   active: true },
-  { id: 3, name: 'Chloe M.',   email: 'chloe@cona.com',  username: 'chloe_m',   role: 'Tour Guide',    active: true },
-  { id: 4, name: 'Petrus N.',  email: 'petrus@cona.com', username: 'petrus_n',  role: 'Tour Guide',    active: true },
-  { id: 5, name: 'David S.',   email: 'david@cona.com',  username: 'david_s',   role: 'Driver',        active: true },
+  { id: 1, name: 'Alice K.',   email: 'alice@cona.com',  username: 'alice_k',   role: 'Super Admin',        active: true },
+  { id: 2, name: 'Bruno M.',   email: 'bruno@cona.com',  username: 'bruno_m',   role: 'Ops Manager',        active: true },
+  { id: 3, name: 'Chloe M.',   email: 'chloe@cona.com',  username: 'chloe_m',   role: 'Tour Guide',         active: true },
+  { id: 4, name: 'Petrus N.',  email: 'petrus@cona.com', username: 'petrus_n',  role: 'Tour Guide',         active: true },
+  { id: 5, name: 'David S.',   email: 'david@cona.com',  username: 'david_s',   role: 'Driver',             active: true },
 ];
 
-const ROLE_OPTIONS = ['Operations Manager', 'Tour Guide', 'Driver', 'Hotel Partner', 'Immigration Officer'];
+// Staff roles that only Super Admin can create
+const ROLE_OPTIONS = ['Operations Manager', 'Tour Guide', 'Driver', 'Immigration Officer'];
+
+const INIT_PARTNERS = [
+  { id: 1, name: 'Okapi Eco Lodge',            type: 'Hotel',             country: '🌿 Congo',   email: 'info@okapilodge.cd',    status: 'pending' },
+  { id: 2, name: 'Namib Desert Camp',           type: 'Hotel',             country: '🏜 Namibia', email: 'stay@namibcamp.na',      status: 'pending' },
+  { id: 3, name: 'Kinshasa Airport Transfers',  type: 'Transport Partner', country: '🌿 Congo',   email: 'ops@kinstransfers.cd',   status: 'pending' },
+  { id: 4, name: 'Etosha Luxury Tents',         type: 'Hotel',             country: '🏜 Namibia', email: 'book@etoshatents.na',    status: 'approved' },
+];
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { t, showPage } = useApp();
+  const { t } = useApp();
+  const { data: session } = useSession();
+
+  const role = session?.user?.role || 'Operations Manager';
+  const isAdmin = role === 'Super Admin';
+
   const [tab, setTab] = useState('overview');
-  const [role, setRole] = useState('Super Admin');
   const [users, setUsers] = useState(INIT_USERS);
+  const [partners, setPartners] = useState(INIT_PARTNERS);
   const [bookingSearch, setBookingSearch] = useState('');
   const [userSearch, setUserSearch] = useState('');
   const [newRole, setNewRole] = useState(ROLE_OPTIONS[0]);
@@ -94,15 +107,31 @@ export default function DashboardPage() {
     setNewName(''); setNewEmail('');
   }
 
+  function approvePartner(id) {
+    setPartners((ps) => ps.map((p) => p.id === id ? { ...p, status: 'approved' } : p));
+  }
+
+  function rejectPartner(id) {
+    setPartners((ps) => ps.map((p) => p.id === id ? { ...p, status: 'rejected' } : p));
+  }
+
+  // Tabs vary by role
   const tabs = [
     { id: 'overview', label: 'Overview' },
     { id: 'bookings', label: 'Bookings' },
-    { id: 'staff',    label: 'Staff & Roles' },
-    { id: 'tours',    label: 'Tours' },
-    { id: 'users',    label: 'User Management' },
+    ...(isAdmin ? [{ id: 'staff', label: 'Staff & Roles' }] : []),
+    { id: 'tours', label: 'Tours' },
+    ...(isAdmin ? [{ id: 'users', label: 'User Management' }] : []),
+    ...(isAdmin ? [{ id: 'partners', label: 'Partners' }] : []),
   ];
 
+  // Keep tab in bounds if role doesn't have access to current tab
+  const validTabIds = tabs.map((tb) => tb.id);
+  const activeTab = validTabIds.includes(tab) ? tab : 'overview';
+
   const today = new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  const roleColor = isAdmin ? 'var(--gold)' : 'var(--teal)';
 
   return (
     <div className="page-shell">
@@ -112,7 +141,8 @@ export default function DashboardPage() {
           <div>
             <div className="cinzel" style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--sand)' }}>{t('opsDash')}</div>
             <div style={{ color: 'var(--muted)', fontSize: '0.78rem', marginTop: 4 }}>
-              CoNa Adventures · {today} · <span style={{ color: 'var(--gold)' }}>{role}</span>
+              CoNa Adventures · {today} ·{' '}
+              <span style={{ color: roleColor, fontWeight: 700 }}>{role}</span>
             </div>
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -126,15 +156,6 @@ export default function DashboardPage() {
             >
               ⚑ Logout
             </button>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              style={{ padding: '8px 12px', borderRadius: 7, border: '1px solid var(--border)', background: 'var(--card2)', color: 'var(--text)', fontSize: '0.75rem', fontFamily: "'Archivo', sans-serif" }}
-            >
-              {['Super Admin', 'Operations Manager', 'Tour Guide', 'Driver', 'Hotel Partner'].map((r) => (
-                <option key={r}>{r}</option>
-              ))}
-            </select>
           </div>
         </div>
 
@@ -143,10 +164,10 @@ export default function DashboardPage() {
           {tabs.map((tb) => (
             <div
               key={tb.id}
-              className={`tab${tab === tb.id ? ' active' : ''}`}
+              className={`tab${activeTab === tb.id ? ' active' : ''}`}
               onClick={() => setTab(tb.id)}
               role="tab"
-              aria-selected={tab === tb.id}
+              aria-selected={activeTab === tb.id}
               tabIndex={0}
               onKeyDown={(e) => e.key === 'Enter' && setTab(tb.id)}
             >
@@ -156,7 +177,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Overview */}
-        {tab === 'overview' && (
+        {activeTab === 'overview' && (
           <>
             <div className="widget-grid">
               {[
@@ -210,7 +231,7 @@ export default function DashboardPage() {
         )}
 
         {/* Bookings */}
-        {tab === 'bookings' && (
+        {activeTab === 'bookings' && (
           <>
             <div className="search-bar">
               <input
@@ -240,8 +261,8 @@ export default function DashboardPage() {
           </>
         )}
 
-        {/* Staff */}
-        {tab === 'staff' && (
+        {/* Staff — Super Admin only */}
+        {activeTab === 'staff' && isAdmin && (
           <div className="role-grid">
             {STAFF_ROLES.map(({ role: r, color, bg, desc }) => (
               <div key={r} className="role-card">
@@ -256,7 +277,7 @@ export default function DashboardPage() {
         )}
 
         {/* Tours */}
-        {tab === 'tours' && (
+        {activeTab === 'tours' && (
           <div className="dash-card">
             <h3>Tour Catalogue</h3>
             <table>
@@ -274,8 +295,8 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Users */}
-        {tab === 'users' && (
+        {/* User Management — Super Admin only */}
+        {activeTab === 'users' && isAdmin && (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
             <div className="dash-card">
               <h3>Search Users &amp; Roles</h3>
@@ -325,6 +346,63 @@ export default function DashboardPage() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Partners — Super Admin only */}
+        {activeTab === 'partners' && isAdmin && (
+          <div className="dash-card">
+            <h3>Hotel &amp; Partner Applications</h3>
+            <p style={{ fontSize: '0.78rem', color: 'var(--muted)', marginBottom: 16 }}>
+              Review and approve partner access requests. Only Super Admin can approve or reject.
+            </p>
+            <table>
+              <thead>
+                <tr><th>NAME</th><th>TYPE</th><th>COUNTRY</th><th>EMAIL</th><th>STATUS</th><th>ACTION</th></tr>
+              </thead>
+              <tbody>
+                {partners.map((p) => (
+                  <tr key={p.id}>
+                    <td style={{ fontWeight: 600 }}>{p.name}</td>
+                    <td>{p.type}</td>
+                    <td>{p.country}</td>
+                    <td style={{ color: 'var(--muted)', fontSize: '0.72rem' }}>{p.email}</td>
+                    <td>
+                      <span className={
+                        p.status === 'approved' ? 'status s-active'
+                        : p.status === 'rejected' ? 'status s-done'
+                        : 'status s-pending'
+                      }>
+                        {p.status.charAt(0).toUpperCase() + p.status.slice(1)}
+                      </span>
+                    </td>
+                    <td>
+                      {p.status === 'pending' && (
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <button
+                            className="btn btn-primary"
+                            style={{ fontSize: '0.68rem', padding: '4px 10px' }}
+                            onClick={() => approvePartner(p.id)}
+                          >
+                            Approve
+                          </button>
+                          <button
+                            className="btn btn-outline"
+                            style={{ fontSize: '0.68rem', padding: '4px 10px', borderColor: 'var(--terra)', color: 'var(--terra)' }}
+                            onClick={() => rejectPartner(p.id)}
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      )}
+                      {p.status !== 'pending' && (
+                        <span style={{ fontSize: '0.72rem', color: 'var(--muted)' }}>—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>

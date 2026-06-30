@@ -1,9 +1,14 @@
 // components/Footer.js
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { useApp } from '../context/AppContext';
 import LogoSeal from './LogoSeal';
 
 export default function Footer() {
   const { showPage, openLogin } = useApp();
+  const { data: session } = useSession();
+  const router = useRouter();
+  const isAdmin = session?.user?.role === 'Super Admin';
 
   return (
     <footer className="footer">
@@ -20,7 +25,18 @@ export default function Footer() {
         <a onClick={() => showPage('gallery')} role="button" tabIndex={0}>Gallery</a>
         <a onClick={() => showPage('planner')} role="button" tabIndex={0}>Plan Trip</a>
         <a onClick={() => showPage('contact')} role="button" tabIndex={0}>Contact</a>
-        <a onClick={openLogin} role="button" tabIndex={0}>Login</a>
+        {isAdmin ? (
+          <a
+            onClick={() => router.push('/dashboard')}
+            role="button"
+            tabIndex={0}
+            style={{ color: 'var(--gold)', fontWeight: 700 }}
+          >
+            ⚡ Dashboard
+          </a>
+        ) : (
+          <a onClick={openLogin} role="button" tabIndex={0}>Login</a>
+        )}
       </div>
 
       <div className="footer-social">
