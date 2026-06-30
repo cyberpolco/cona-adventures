@@ -1,16 +1,23 @@
 // components/Footer.js
-import { useSession, signOut } from 'next-auth/react';
-import { useRouter } from 'next/router';
-import { useApp } from '../context/AppContext';
-import LogoSeal from './LogoSeal';
+import { useSession } from 'next-auth/react';
+import { useRouter }  from 'next/router';
+import { useApp }     from '../context/AppContext';
+import LogoSeal       from './LogoSeal';
 
 const STAFF_ROLES = ['Super Admin', 'Operations Manager', 'Tour Guide', 'Driver'];
 
 export default function Footer() {
   const { showPage, openLogin } = useApp();
-  const { data: session } = useSession();
-  const router = useRouter();
+  const { data: session }       = useSession();
+  const router                  = useRouter();
   const isStaff = STAFF_ROLES.includes(session?.user?.role);
+
+  // If already a staff member go straight to the dashboard; otherwise open
+  // the login modal so they can sign in and land there automatically.
+  const handleDashboard = () => {
+    if (isStaff) router.push('/dashboard');
+    else         openLogin();
+  };
 
   return (
     <footer className="footer">
@@ -27,16 +34,14 @@ export default function Footer() {
         <a onClick={() => showPage('gallery')} role="button" tabIndex={0}>Gallery</a>
         <a onClick={() => showPage('planner')} role="button" tabIndex={0}>Plan Trip</a>
         <a onClick={() => showPage('contact')} role="button" tabIndex={0}>Contact</a>
-        <a onClick={openLogin}                 role="button" tabIndex={0}>Login</a>
-        {isStaff && (
-          <a
-            onClick={() => router.push('/dashboard')}
-            role="button" tabIndex={0}
-            style={{ color: 'var(--gold)', fontWeight: 700 }}
-          >
-            ⚡ Dashboard
-          </a>
-        )}
+        <a
+          onClick={handleDashboard}
+          role="button"
+          tabIndex={0}
+          style={isStaff ? { color: 'var(--gold)', fontWeight: 700 } : {}}
+        >
+          {isStaff ? '⚡ Dashboard' : 'Dashboard'}
+        </a>
       </div>
 
       <div className="footer-social">

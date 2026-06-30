@@ -670,11 +670,24 @@ function AdminOpsDashboard({ session, router }) {
 // ─── Main export — branches by role ─────────────────────────────────────────
 
 export default function DashboardPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
-  const role = session?.user?.role;
 
-  if (role === 'Tour Guide') return <GuideDashboard session={session} router={router} />;
-  if (role === 'Driver')     return <DriverDashboard session={session} router={router} />;
-  return <AdminOpsDashboard session={session} router={router} />;
+  // Hold until NextAuth has resolved the session so we never flash the wrong
+  // role view. getServerSideProps already verified the user is authenticated,
+  // so this loading state is brief (JWT is in-cookie, no network round-trip).
+  if (status === 'loading') {
+    return (
+      <div className="page-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+        <div className="cinzel" style={{ color: 'var(--muted)', fontSize: '0.8rem', letterSpacing: '0.15em' }}>
+          LOADING…
+        </div>
+      </div>
+    );
+  }
+
+  const role = session?.user?.role;
+  if (role === 'Tour Guide') return <GuideDashboard  session={session} router={router} />;
+  if (role === 'Driver')     return <DriverDashboard  session={session} router={router} />;
+  return                            <AdminOpsDashboard session={session} router={router} />;
 }
