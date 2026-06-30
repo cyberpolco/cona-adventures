@@ -16,6 +16,9 @@ export default function Dashboard() {
 }
 
 export async function getServerSideProps(ctx) {
+  // Never cache an authenticated admin page (prevents stale dashboard via
+  // back/forward cache after logout or account switch).
+  ctx.res.setHeader('Cache-Control', 'no-store, max-age=0, must-revalidate');
   const gate = await requireRole(ctx, [ROLES.ADMIN, ROLES.OPS]);
   if (gate.redirect) return { redirect: gate.redirect };
   return { props: {} };

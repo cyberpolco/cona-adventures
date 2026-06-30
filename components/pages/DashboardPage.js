@@ -1,5 +1,6 @@
 // components/pages/DashboardPage.js
 import { useState } from 'react';
+import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useApp } from '../../context/AppContext';
 
@@ -96,6 +97,13 @@ export default function DashboardPage() {
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <button className="btn btn-outline" onClick={() => router.push('/')} style={{ fontSize: '0.75rem' }}>
               {t('publicSite')}
+            </button>
+            <button
+              className="btn btn-outline"
+              onClick={() => signOut({ callbackUrl: '/' })}
+              style={{ fontSize: '0.75rem' }}
+            >
+              ⚑ Logout
             </button>
             <select
               value={role}
