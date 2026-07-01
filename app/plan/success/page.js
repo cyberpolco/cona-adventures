@@ -4,8 +4,9 @@ import Toast       from '../../../components/Toast';
 import SuccessPage from '../../../components/pages/SuccessPage';
 
 export const metadata = {
-  title:       'Booking Confirmed — CoNa Adventures',
-  description: 'Your CoNa Adventures expedition has been booked. Get ready for your adventure.',
+  title:       'Booking Confirmed',
+  description: 'Your CoNa Adventures expedition has been confirmed. Get ready for your adventure.',
+  robots: { index: false, follow: false },
 };
 
 export default function Success() {

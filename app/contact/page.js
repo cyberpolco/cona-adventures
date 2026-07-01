@@ -4,9 +4,12 @@ import LoginModal  from '../../components/LoginModal';
 import Toast       from '../../components/Toast';
 import ContactPage from '../../components/pages/ContactPage';
 
+const DESC = 'Get in touch with CoNa Adventures to plan your bespoke expedition to DR Congo or Namibia.';
+
 export const metadata = {
-  title:       'Contact — CoNa Adventures',
-  description: 'Get in touch with CoNa Adventures to plan your expedition to DR Congo or Namibia.',
+  title:       'Contact',
+  description: DESC,
+  openGraph: { description: DESC, url: '/contact' },
 };
 
 export default function Contact() {
