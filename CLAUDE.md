@@ -49,6 +49,8 @@ Seed logins: `admin@cona.com` (Super Admin), `ops@cona.com` (Ops), `guide@cona.c
 | `FLW_SECRET_KEY` | Flutterwave secret (TEST keys for staging) |
 | `FLW_WEBHOOK_HASH` | must match the secret hash set in the Flutterwave dashboard |
 | `PAYMENT_CURRENCY` | `USD` (cards). Local mobile money needs the local currency. |
+| `RESEND_API_KEY` | Resend API key — omit locally to use console-log fallback |
+| `EMAIL_FROM` | Sender address, e.g. `CoNa Adventures <noreply@conaadventures.com>` |
 
 On Vercel: set all of the above in Settings → Environment Variables. `package.json` runs `prisma generate` in `postinstall` + `build` (don't remove — Prisma deploys fail without it).
 
@@ -61,7 +63,7 @@ On Vercel: set all of the above in Settings → Environment Variables. `package.
 
 ## Backlog (priority order)
 **Finish current:** apply the three folders, run migrations + seed, deploy, then end-to-end test the booking→payment→dashboard flow with Flutterwave TEST keys.
-1. **Phase 2b — email**: send confirmation + portal credentials on `markBookingPaid` (Resend/Postmark + verified sending domain, SPF/DKIM/DMARC).
+1. ~~**Phase 2b — email**~~ ✅ Done (2026-07-01) — Resend; dev console-log fallback; sends once on first paid transition; idempotent. Set `RESEND_API_KEY` + `EMAIL_FROM` in env to go live. Still needed before prod: verified sending domain + SPF/DKIM/DMARC records.
 2. Migrate **gallery submissions** and **guide ratings** off in-memory arrays to the existing tables.
 3. **P1 routing/SEO (high value):** move from the SPA-in-Next pattern to real routes (App Router), per-page metadata + OG tags, `sitemap.xml`, `robots.txt`, JSON-LD travel schema, `hreflang` for EN/FR.
 4. **P1 mobile nav**: add a hamburger menu (nav links are hidden ≤640px with no replacement).
