@@ -16,25 +16,28 @@ The work lives in three folders that mirror the repo structure (`p0-1-auth/`, `p
 
 **P0.1 — Real auth + RBAC + protected dashboard** ✅ verified (build + runtime)
 - NextAuth (Auth.js v4) credentials; passwords hashed (bcrypt); roles assigned **server-side**.
-- `/dashboard` is a real route guarded by `getServerSideProps` **and** `middleware.js` (admin/ops only). Tested: admin/ops→200, guide/driver/anon→307.
+- `/dashboard` is guarded by `getServerSideProps` **and** `middleware.js`. All four staff roles (Admin/Ops/Guide/Driver) can enter; each gets a role-appropriate view. Anon→307. Admin/Ops see booking data; Guide/Driver see their own tour/trip lists.
 - Logout in `Nav.js` (public pages) and `DashboardPage.js` (dashboard). `/dashboard` sets `Cache-Control: no-store`.
 
 **P0.2 — Payments (Flutterwave Standard / hosted checkout)** ✅ verified except a live charge
 - No card data is ever collected in-app (PCI SAQ A). Price is **recomputed server-side** in `/api/checkout` (client price is ignored — tested).
 - Flow: `/api/checkout` → hosted link → `/payment/callback` → `/api/payments/verify` (re-verifies server-side) → `/api/webhooks/flutterwave` (authoritative; `verif-hash` checked — tested 401/200).
 
-**Phase 2a — Database (Prisma + PostgreSQL)** ⚠️ compiles + pure logic unit-tested; **DB not run yet** (my build env blocked Prisma's engine host). Needs `prisma generate` + migrate + seed locally/on Vercel.
+**Phase 2a — Database (Prisma + PostgreSQL / SQLite local)** ✅ fully verified (build + runtime, 2026-07-01)
+- Pinned to **Prisma 5.22.0** — last version supporting Node 18. Do NOT upgrade to 6+ without upgrading Node first.
+- `prisma/dev.db` (SQLite) exists with migration `20260630153215_init` applied. All 4 seed accounts present.
+- Auth reads users from DB; checkout persists a Booking before the gateway call (gracefully continues if DB fails); `markBookingPaid` is idempotent; `/api/bookings` is admin/ops-only (403 for guides).
 - Models: User, Booking, Traveler, Payment, GallerySubmission, GuideRating.
-- Auth reads users from DB; checkout persists a Booking; verify + webhook `markBookingPaid` (idempotent); dashboard reads `/api/bookings` (admin-guarded).
 
 ## Setup (run these first)
 ```bash
 npm install
 # .env.local — see Environment below
-npx prisma migrate dev --name init     # or: npx prisma db push  (SQLite quick-start)
-node prisma/seed.js                     # seeds staff accounts (pw: ChangeMe!2026)
+node_modules/.bin/prisma migrate dev --name init   # use local binary — npx may pull v7+ which needs Node 20
+node prisma/seed.js                                 # seeds staff accounts (pw: ChangeMe!2026)
 npm run dev
 ```
+**Node version note:** The repo requires Node 18-compatible packages. Prisma is pinned to 5.22.0. If `npx prisma` pulls v7+, use `node_modules/.bin/prisma` directly.
 Seed logins: `admin@cona.com` (Super Admin), `ops@cona.com` (Ops), `guide@cona.com` (Guide), `driver@cona.com` (Driver) — all `ChangeMe!2026`. **Change before production.**
 
 ## Environment variables
