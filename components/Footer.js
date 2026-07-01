@@ -7,7 +7,7 @@ import LogoSeal       from './LogoSeal';
 const STAFF_ROLES = ['Super Admin', 'Operations Manager', 'Tour Guide', 'Driver'];
 
 export default function Footer() {
-  const { openLogin } = useApp();
+  const { openLogin, lang } = useApp();
   const { data: session } = useSession();
   const router  = useRouter();
   const isStaff = STAFF_ROLES.includes(session?.user?.role);
@@ -28,10 +28,10 @@ export default function Footer() {
       </div>
 
       <div className="footer-links">
-        <a onClick={() => router.push('/')}       role="button" tabIndex={0}>Home</a>
-        <a onClick={() => router.push('/gallery')} role="button" tabIndex={0}>Gallery</a>
-        <a onClick={() => router.push('/plan')}   role="button" tabIndex={0}>Plan Trip</a>
-        <a onClick={() => router.push('/contact')} role="button" tabIndex={0}>Contact</a>
+        <a onClick={() => router.push(`/${lang}`)}          role="button" tabIndex={0}>Home</a>
+        <a onClick={() => router.push(`/${lang}/gallery`)}  role="button" tabIndex={0}>Gallery</a>
+        <a onClick={() => router.push(`/${lang}/plan`)}     role="button" tabIndex={0}>Plan Trip</a>
+        <a onClick={() => router.push(`/${lang}/contact`)}  role="button" tabIndex={0}>Contact</a>
         <a
           onClick={handleDashboard}
           role="button"

@@ -28,7 +28,7 @@ function buildDays(tripData) {
 }
 
 export default function ItineraryPage() {
-  const { t } = useApp();
+  const { t, lang } = useApp();
   const router = useRouter();
   const [tripData, setTripData] = useState(null);
 
@@ -43,7 +43,7 @@ export default function ItineraryPage() {
 
   function handleProceed() {
     setBooking({ tripData, price, days });
-    router.push('/plan/payment');
+    router.push(`/${lang}/plan/payment`);
   }
 
   if (!tripData?.country) {
@@ -51,7 +51,7 @@ export default function ItineraryPage() {
       <div className="page-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
         <div style={{ textAlign: 'center' }}>
           <p style={{ color: 'var(--muted)', marginBottom: 16 }}>No itinerary yet — start by planning your trip.</p>
-          <button className="btn btn-primary" onClick={() => router.push('/plan')}>Plan My Adventure</button>
+          <button className="btn btn-primary" onClick={() => router.push(`/${lang}/plan`)}>Plan My Adventure</button>
         </div>
       </div>
     );
@@ -110,7 +110,7 @@ export default function ItineraryPage() {
 
         {/* Actions */}
         <div className="step-nav" style={{ marginTop: 24 }}>
-          <button className="btn-back" onClick={() => router.push('/plan')}>{t('editTrip')}</button>
+          <button className="btn-back" onClick={() => router.push(`/${lang}/plan`)}>{t('editTrip')}</button>
           <button className="btn-next" onClick={handleProceed}>{t('proceedBook')}</button>
         </div>
       </div>

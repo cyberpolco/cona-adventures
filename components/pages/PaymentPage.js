@@ -9,7 +9,7 @@ import { getTripData, getBooking, mergeBooking } from '../../lib/bookingSession'
 const METHODS = ['💳 Card', '🏦 Bank Transfer', '📱 Mobile Money'];
 
 export default function PaymentPage() {
-  const { t, showToast } = useApp();
+  const { t, showToast, lang } = useApp();
   const router = useRouter();
 
   const [tripData, setTripData] = useState(null);
@@ -48,7 +48,7 @@ export default function PaymentPage() {
       const username = handle + '_' + Math.floor(100 + Math.random() * 900);
 
       mergeBooking({ ref: data.ref, price: data.price, email, username, payType, dueNow: data.dueNow });
-      router.push('/plan/success');
+      router.push(`/${lang}/plan/success`);
     } catch {
       showToast('Network error — please try again.');
     }
@@ -129,7 +129,7 @@ export default function PaymentPage() {
         </div>
 
         <div className="step-nav">
-          <button className="btn-back" onClick={() => router.push('/plan/itinerary')} disabled={busy}>{t('back')}</button>
+          <button className="btn-back" onClick={() => router.push(`/${lang}/plan/itinerary`)} disabled={busy}>{t('back')}</button>
           <button className="btn-next" onClick={handleConfirm} disabled={busy}>
             {busy ? '…' : t('confirmBook')}
           </button>

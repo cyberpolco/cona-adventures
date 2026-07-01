@@ -126,7 +126,7 @@ function TravelerForm({ index, isLead, isChild, data, onChange }) {
 }
 
 export default function TripPlannerPage() {
-  const { t, showToast } = useApp();
+  const { t, showToast, lang } = useApp();
   const router = useRouter();
 
   const [step, setStep] = useState(1);
@@ -210,7 +210,7 @@ export default function TripPlannerPage() {
   function buildItinerary() {
     const data = { country, experiences, adults, children, arrival, departure, flexible, accommodation, transport, services, travelers, consent: true };
     setTripData(data);
-    router.push('/plan/itinerary');
+    router.push(`/${lang}/plan/itinerary`);
   }
 
   const progress = ((step - 1) / (TOTAL_STEPS - 1)) * 100;

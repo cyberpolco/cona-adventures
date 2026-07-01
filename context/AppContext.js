@@ -1,11 +1,16 @@
 'use client';
 import { createContext, useContext, useState, useCallback } from 'react';
+import { useParams } from 'next/navigation';
 import { translations } from '../lib/translations';
 
 const AppContext = createContext(null);
 
 export function AppProvider({ children }) {
-  const [lang, setLangState] = useState('en');
+  // Derive lang from the URL [lang] segment; fall back to 'en' for pages
+  // outside the [lang] subtree (dashboard, payment/callback).
+  const params = useParams();
+  const lang = (params?.lang === 'fr') ? 'fr' : 'en';
+
   const [loginOpen, setLoginOpen] = useState(false);
   const [toast, setToast] = useState(null);
 
@@ -21,7 +26,7 @@ export function AppProvider({ children }) {
 
   return (
     <AppContext.Provider value={{
-      lang, setLang: setLangState, t,
+      lang, t,
       loginOpen, openLogin, closeLogin,
       toast, showToast,
     }}>

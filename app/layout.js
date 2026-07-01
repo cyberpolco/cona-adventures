@@ -1,51 +1,10 @@
 import '../styles/globals.css';
-import Providers from '../components/Providers';
 import { SITE_URL } from '../lib/siteUrl';
 
-const SITE_NAME   = 'CoNa Adventures';
-const DEFAULT_DESC = 'Guided expeditions through the rainforests of DR Congo and the dunes of Namibia. Africa awaits.';
-
+// Minimal root layout — just the HTML shell and fonts.
+// All page-level metadata lives in app/[lang]/layout.js.
 export const metadata = {
-  // Resolves relative og:url / og:image paths against the canonical origin.
-  // On Vercel: NEXTAUTH_URL (prod) → VERCEL_URL (preview) → hardcoded fallback.
   metadataBase: new URL(SITE_URL),
-
-  title: {
-    template: `%s — ${SITE_NAME}`,
-    default:  SITE_NAME,
-  },
-  description: DEFAULT_DESC,
-
-  openGraph: {
-    title: {
-      template: `%s — ${SITE_NAME}`,
-      default:  SITE_NAME,
-    },
-    description: DEFAULT_DESC,
-    siteName:    SITE_NAME,
-    type:        'website',
-    locale:      'en_US',
-    // og:image auto-populated from app/opengraph-image.js
-  },
-
-  // Do NOT split twitter across pages — a partial twitter object on a child
-  // page replaces the root object entirely, losing card:'summary_large_image'.
-  // Keep the full twitter config here; pages only override title/description
-  // via the title template and openGraph.description.
-  twitter: {
-    card:        'summary_large_image',
-    title: {
-      template: `%s — ${SITE_NAME}`,
-      default:  SITE_NAME,
-    },
-    description: DEFAULT_DESC,
-    // twitter:image auto-populated from app/opengraph-image.js
-  },
-
-  robots: {
-    index:  true,
-    follow: true,
-  },
 };
 
 export const viewport = {
@@ -65,7 +24,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
-        <Providers>{children}</Providers>
+        {children}
       </body>
     </html>
   );

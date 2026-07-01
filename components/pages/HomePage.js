@@ -15,12 +15,12 @@ const EXPERIENCES = [
 ];
 
 export default function HomePage() {
-  const { t } = useApp();
+  const { t, lang } = useApp();
   const router = useRouter();
 
   function selectCountry(country) {
     mergeTripData({ country });
-    router.push('/plan');
+    router.push(`/${lang}/plan`);
   }
 
   return (
@@ -41,7 +41,7 @@ export default function HomePage() {
             <button
               className="btn btn-primary cinzel"
               style={{ padding: '13px 30px', fontSize: '0.82rem' }}
-              onClick={() => router.push('/plan')}
+              onClick={() => router.push(`/${lang}/plan`)}
             >
               ✦ {t('planAdventure')}
             </button>

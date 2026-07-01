@@ -6,7 +6,7 @@ import { getBooking, clearBookingSession } from '../../lib/bookingSession';
 
 export default function SuccessPage() {
   const router = useRouter();
-  const { t }  = useApp();
+  const { t, lang }  = useApp();
   const [booking, setBooking] = useState(null);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export default function SuccessPage() {
 
   function goHome() {
     clearBookingSession();
-    router.push('/');
+    router.push(`/${lang}`);
   }
 
   return (

@@ -1,5 +1,4 @@
 'use client';
-// Client boundary: SessionProvider + AppProvider must be client components.
 import { SessionProvider } from 'next-auth/react';
 import { AppProvider } from '../context/AppContext';
 
