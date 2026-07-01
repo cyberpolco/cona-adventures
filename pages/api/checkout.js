@@ -6,6 +6,7 @@
 import { estimatePrice, depositOf } from '../../lib/pricing';
 import { flwConfigured, initPayment } from '../../lib/flutterwave.server';
 import { prisma } from '../../lib/prisma';
+import { CONSENT_VERSION, isMinorAtTravel, computeRetainUntil } from '../../lib/pii.server';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -13,41 +14,69 @@ export default async function handler(req, res) {
   const { tripData, payType } = req.body || {};
   if (!tripData) return res.status(400).json({ error: 'Missing trip details' });
 
+  // Require explicit consent before persisting any personal data.
+  if (!tripData.consent) {
+    return res.status(400).json({ error: 'Consent to personal data collection is required' });
+  }
+
   const price  = estimatePrice(tripData);
   const dueNow = payType === 'deposit' ? depositOf(price) : price;
   if (!price || price <= 0) return res.status(400).json({ error: 'Invalid trip selection' });
 
-  const ref    = 'CNA-' + Math.floor(8000 + Math.random() * 1999);
-  const tx_ref = `${ref}-${Date.now()}`;
+  const ref      = 'CNA-' + Math.floor(8000 + Math.random() * 1999);
+  const tx_ref   = `${ref}-${Date.now()}`;
   const currency = process.env.PAYMENT_CURRENCY || 'USD';
 
-  // Persist a pending booking so it's visible in the dashboard immediately.
+  const travelers  = tripData?.travelers || [];
+  const travelStr  = tripData.arrival   || null;
+  const depStr     = tripData.departure || null;
+  const consentAt  = new Date();
+
+  // Retention: 1 year after travel date (or from now if no date given).
+  const retentionBase = travelStr ? new Date(travelStr) : consentAt;
+  const dataRetentionExpiry = new Date(retentionBase.getTime() + 365 * 24 * 60 * 60 * 1000);
+
+  // Persist a pending booking with all travelers.
   try {
-    const lead = tripData?.travelers?.[0] || {};
     await prisma.booking.upsert({
       where: { ref },
       update: {},
       create: {
         ref,
-        country:       tripData.country || '',
-        adults:        Number(tripData.adults) || 1,
-        children:      Number(tripData.children) || 0,
-        experiences:   JSON.stringify(tripData.experiences || []),
-        accommodation: tripData.accommodation || null,
-        payType:       payType || 'full',
-        priceTotal:    price,
-        priceCharged:  dueNow,
-        status:        'pending',
-        travelers: lead.firstName
-          ? {
-              create: {
-                firstName: lead.firstName || '',
-                lastName:  lead.lastName  || '',
-                email:     lead.email     || null,
-                phone:     lead.phone     || null,
-              },
-            }
-          : undefined,
+        country:             tripData.country || '',
+        adults:              Number(tripData.adults)   || 1,
+        children:            Number(tripData.children) || 0,
+        experiences:         JSON.stringify(tripData.experiences || []),
+        accommodation:       tripData.accommodation || null,
+        payType:             payType || 'full',
+        priceTotal:          price,
+        priceCharged:        dueNow,
+        status:              'pending',
+        travelDate:          travelStr ? new Date(travelStr) : null,
+        departureDate:       depStr    ? new Date(depStr)    : null,
+        dataRetentionExpiry,
+        travelers: {
+          create: travelers
+            .filter((t) => t.firstName && t.lastName)
+            .map((t) => {
+              const minor  = isMinorAtTravel(t.dob, travelStr);
+              const retain = computeRetainUntil(travelStr, minor);
+              return {
+                firstName:        t.firstName   || '',
+                middleName:       t.middleName   || null,
+                lastName:         t.lastName    || '',
+                email:            t.email       || null,
+                phone:            t.phone       || null,
+                dob:              t.dob         || null,
+                nationality:      t.nationality || null,
+                isMinor:          minor,
+                consentGiven:     true,
+                consentTimestamp: consentAt,
+                consentVersion:   CONSENT_VERSION,
+                retainUntil:      retain,
+              };
+            }),
+        },
         payments: {
           create: {
             txRef:    tx_ref,
@@ -59,8 +88,8 @@ export default async function handler(req, res) {
         },
       },
     });
+    console.log(`[checkout] ref=${ref} travelers=${travelers.length} consent=${CONSENT_VERSION}`);
   } catch (e) {
-    // DB write failure should not block checkout — log and continue.
     console.error('Booking persist failed:', e.message);
   }
 
@@ -69,7 +98,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, mock: true, ref, price, dueNow });
   }
 
-  const lead    = tripData?.travelers?.[0] || {};
+  const lead    = travelers[0] || {};
   const baseUrl = process.env.NEXTAUTH_URL || `https://${req.headers.host}`;
 
   try {

@@ -19,36 +19,49 @@ model User {
 }
 
 model Booking {
-  id            String     @id @default(cuid())
-  ref           String     @unique
-  userId        String?
-  user          User?      @relation(fields: [userId], references: [id])
-  country       String
-  adults        Int        @default(1)
-  children      Int        @default(0)
-  experiences   String     @default("[]") // JSON array stored as text
-  accommodation String?
-  payType       String     @default("full")
-  priceTotal    Int
-  priceCharged  Int
-  status        String     @default("pending") // pending | paid | cancelled
-  travelers     Traveler[]
-  payments      Payment[]
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
+  id                  String     @id @default(cuid())
+  ref                 String     @unique
+  userId              String?
+  user                User?      @relation(fields: [userId], references: [id])
+  country             String
+  adults              Int        @default(1)
+  children            Int        @default(0)
+  experiences         String     @default("[]")
+  accommodation       String?
+  payType             String     @default("full")
+  priceTotal          Int
+  priceCharged        Int
+  status              String     @default("pending")
+  travelDate          DateTime?
+  departureDate       DateTime?
+  dataRetentionExpiry DateTime?
+  travelers           Traveler[]
+  payments            Payment[]
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
 }
 
 model Traveler {
-  id        String   @id @default(cuid())
-  bookingId String
-  booking   Booking  @relation(fields: [bookingId], references: [id])
-  firstName String
-  lastName  String
-  email     String?
-  phone     String?
-  passport  String? // file reference only — never store PII binary here
-  dob       String?
-  createdAt DateTime @default(now())
+  id                String    @id @default(cuid())
+  bookingId         String
+  booking           Booking   @relation(fields: [bookingId], references: [id])
+  firstName         String
+  middleName        String?
+  lastName          String
+  email             String?
+  phone             String?
+  dob               String?
+  nationality       String?
+  passport          String?
+  isMinor           Boolean   @default(false)
+  guardianName      String?
+  guardianConsent   Boolean   @default(false)
+  guardianConsentAt DateTime?
+  consentGiven      Boolean   @default(false)
+  consentTimestamp  DateTime?
+  consentVersion    String?
+  retainUntil       DateTime?
+  createdAt         DateTime  @default(now())
 }
 
 model Payment {
@@ -59,7 +72,7 @@ model Payment {
   transactionId String?
   amount        Float
   currency      String
-  status        String   @default("pending") // pending | successful | failed
+  status        String   @default("pending")
   gateway       String   @default("flutterwave")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -70,7 +83,7 @@ model GallerySubmission {
   name      String?
   email     String?
   caption   String?
-  fileRef   String? // object storage reference; never store file binary here
+  fileRef   String?
   approved  Boolean  @default(false)
   createdAt DateTime @default(now())
 }

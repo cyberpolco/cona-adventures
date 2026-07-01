@@ -51,6 +51,7 @@ Seed logins: `admin@cona.com` (Super Admin), `ops@cona.com` (Ops), `guide@cona.c
 | `PAYMENT_CURRENCY` | `USD` (cards). Local mobile money needs the local currency. |
 | `RESEND_API_KEY` | Resend API key — omit locally to use console-log fallback |
 | `EMAIL_FROM` | Sender address, e.g. `CoNa Adventures <noreply@conaadventures.com>` |
+| `ENCRYPTION_KEY` | 64-char hex (AES-256-GCM) for passport field references: `openssl rand -hex 32` |
 
 On Vercel: set all of the above in Settings → Environment Variables. `package.json` runs `prisma generate` in `postinstall` + `build` (don't remove — Prisma deploys fail without it).
 
@@ -59,12 +60,13 @@ On Vercel: set all of the above in Settings → Environment Variables. `package.
 2. Never trust a client-supplied price or role — recompute price server-side; roles come from the DB/session.
 3. Protect `/dashboard` and admin APIs **server-side** (session + role), never by hiding UI.
 4. Webhooks verify the `verif-hash` before acting; payment confirmation is idempotent.
-5. Passport/minor PII: store files in encrypted object storage, keep only a reference in the DB; capture consent; define retention.
+5. Passport/minor PII: store files in encrypted object storage (use `lib/encrypt.server.js` AES-256-GCM before writing the `passport` field); consent captured at checkout; retention tracked per-traveler (`retainUntil`). **Policy: adults 365 days post-travel, minors 90 days, passport key 30 days.** `ENCRYPTION_KEY` env var required in prod.
 
 ## Backlog (priority order)
 **Finish current:** apply the three folders, run migrations + seed, deploy, then end-to-end test the booking→payment→dashboard flow with Flutterwave TEST keys.
 1. ~~**Phase 2b — email**~~ ✅ Done (2026-07-01) — Resend; dev console-log fallback; sends once on first paid transition; idempotent. Set `RESEND_API_KEY` + `EMAIL_FROM` in env to go live. Still needed before prod: verified sending domain + SPF/DKIM/DMARC records.
-2. Migrate **gallery submissions** and **guide ratings** off in-memory arrays to the existing tables.
+2. ~~**PII handling**~~ ✅ Done (2026-07-01) — consent checkbox in planner (step 8, per-traveler); checkout enforces `consent: true` (400 otherwise); DOB/nationality/isMinor/retainUntil stored per traveler; `passport` field always stripped from API; Ops/Admin see DOB+nationality for visa, Guides/Drivers do not; `lib/encrypt.server.js` ready for when passport uploads are added.
+3. Migrate **gallery submissions** and **guide ratings** off in-memory arrays to the existing tables.
 3. **P1 routing/SEO (high value):** move from the SPA-in-Next pattern to real routes (App Router), per-page metadata + OG tags, `sitemap.xml`, `robots.txt`, JSON-LD travel schema, `hreflang` for EN/FR.
 4. **P1 mobile nav**: add a hamburger menu (nav links are hidden ≤640px with no replacement).
 5. **P2:** consistent accessibility (real `<button>`s, `aria-label` on meaningful emoji, skip link), migrate to TypeScript (types already installed), consolidate inline styles, self-host fonts (`next/font`) + map TopoJSON, add tests/CI.

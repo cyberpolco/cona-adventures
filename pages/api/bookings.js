@@ -4,6 +4,7 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from './auth/[...nextauth]';
 import { prisma } from '../../lib/prisma';
+import { redactTraveler } from '../../lib/pii.server';
 
 const ALLOWED = ['Super Admin', 'Operations Manager'];
 
@@ -15,9 +16,17 @@ export default async function handler(req, res) {
     return res.status(403).json({ error: 'Forbidden' });
   }
 
+  const role = session.user.role;
+
   const bookings = await prisma.booking.findMany({
     orderBy: { createdAt: 'desc' },
     include: { travelers: true, payments: true },
   });
-  return res.status(200).json({ bookings });
+
+  const redacted = bookings.map((b) => ({
+    ...b,
+    travelers: b.travelers.map((t) => redactTraveler(t, role)),
+  }));
+
+  return res.status(200).json({ bookings: redacted });
 }

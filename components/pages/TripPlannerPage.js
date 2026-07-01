@@ -105,6 +105,19 @@ function TravelerForm({ index, isLead, isChild, data, onChange }) {
           <NatSelect value={data.nationality || ''} onChange={(v) => onChange('nationality', v)} />
         </div>
       </div>
+      <div style={{ marginTop: 16, padding: '12px 14px', background: 'rgba(46,138,138,0.06)', borderRadius: 8, border: '1px solid var(--border)' }}>
+        <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', cursor: 'pointer', fontSize: '0.85rem', color: 'var(--text)' }}>
+          <input
+            type="checkbox"
+            checked={data.consentGiven || false}
+            onChange={(e) => onChange('consentGiven', e.target.checked)}
+            style={{ marginTop: 2, cursor: 'pointer', accentColor: 'var(--gold)' }}
+          />
+          <span>
+            I consent to CoNa Adventures collecting and processing my personal data (name, contact, date of birth, nationality) for booking confirmation, visa assistance, and travel arrangements. Data is securely stored and deleted 12 months after the trip (3 months for minors). You may request deletion at info@conaadventures.com.
+          </span>
+        </label>
+      </div>
     </div>
   );
 }
@@ -164,17 +177,28 @@ export default function TripPlannerPage() {
     if (step === 4) return !!arrival && !!departure;
     if (step === 5) return !!accommodation;
     if (step === 6) return !!transport;
+    if (step === 8) {
+      for (const traveler of travelers) {
+        if (!traveler.firstName || !traveler.lastName) return false;
+        if (!traveler.consentGiven) return false;
+      }
+      return true;
+    }
     return true;
   }
 
   function handleNext() {
-    if (!canAdvance()) { showToast('Please complete this step before continuing.'); return; }
+    if (!canAdvance()) {
+      if (step === 8) { showToast('All travelers must complete their details and consent before continuing.'); return; }
+      showToast('Please complete this step before continuing.');
+      return;
+    }
     if (step < TOTAL_STEPS) setStep((s) => s + 1);
     else buildItinerary();
   }
 
   function buildItinerary() {
-    const data = { country, experiences, adults, children, arrival, departure, flexible, accommodation, transport, services, travelers };
+    const data = { country, experiences, adults, children, arrival, departure, flexible, accommodation, transport, services, travelers, consent: true };
     setTripData(data);
     showPage('itinerary');
   }
