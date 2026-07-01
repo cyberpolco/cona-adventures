@@ -1,14 +1,26 @@
-// components/pages/SuccessPage.js
-import { useRouter } from 'next/router';
+'use client';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useApp } from '../../context/AppContext';
+import { getBooking, clearBookingSession } from '../../lib/bookingSession';
 
 export default function SuccessPage() {
   const router = useRouter();
-  const { t, booking, showPage } = useApp();
+  const { t }  = useApp();
+  const [booking, setBooking] = useState(null);
+
+  useEffect(() => {
+    setBooking(getBooking());
+  }, []);
 
   const ref      = booking?.ref      ?? 'CNA-00000';
   const email    = booking?.email    ?? 'your@email.com';
   const username = booking?.username ?? '';
+
+  function goHome() {
+    clearBookingSession();
+    router.push('/');
+  }
 
   return (
     <div className="page-shell success-wrap">
@@ -70,7 +82,7 @@ export default function SuccessPage() {
         )}
 
         <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button className="btn btn-primary" onClick={() => showPage('home')}>{t('backHome')}</button>
+          <button className="btn btn-primary" onClick={goHome}>{t('backHome')}</button>
           <button className="btn btn-outline" onClick={() => router.push('/dashboard')}>{t('viewDash')}</button>
         </div>
       </div>

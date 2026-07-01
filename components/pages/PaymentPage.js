@@ -1,21 +1,28 @@
-// components/pages/PaymentPage.js
-// SECURE checkout: no card fields are collected here. The browser sends the
-// trip selections to /api/checkout, the SERVER recomputes the amount, and (in
-// Phase 2) returns a hosted-checkout URL where the customer enters card details
-// on the provider's PCI-compliant page. Card data never touches this app.
-import { useState } from 'react';
+'use client';
+// SECURE checkout: no card fields collected here. Browser sends trip selections to
+// /api/checkout; server recomputes amount; redirects to Flutterwave hosted page.
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useApp } from '../../context/AppContext';
+import { getTripData, getBooking, mergeBooking } from '../../lib/bookingSession';
 
 const METHODS = ['💳 Card', '🏦 Bank Transfer', '📱 Mobile Money'];
 
 export default function PaymentPage() {
-  const { t, booking, showPage, setBooking, showToast, tripData } = useApp();
+  const { t, showToast } = useApp();
+  const router = useRouter();
 
-  const [payType, setPayType] = useState('full'); // full | deposit
+  const [tripData, setTripData] = useState(null);
+  const [booking,  setLocalBooking] = useState(null);
+  const [payType, setPayType] = useState('full');
   const [method, setMethod]   = useState(null);
   const [busy, setBusy]       = useState(false);
 
-  // Display-only estimate (the charged amount is whatever the server returns).
+  useEffect(() => {
+    setTripData(getTripData());
+    setLocalBooking(getBooking());
+  }, []);
+
   const price   = booking?.price ?? 0;
   const deposit = Math.round(price * 0.4);
   const balance = price - deposit;
@@ -32,20 +39,17 @@ export default function PaymentPage() {
       const data = await r.json();
       if (!r.ok || !data.ok) { showToast(data.error || 'Could not start checkout.'); setBusy(false); return; }
 
-      // Real gateway: redirect to Flutterwave's hosted checkout (card data
-      // is entered there, never here). Returns here via /payment/callback.
       if (data.url) { window.location.href = data.url; return; }
 
-      // Dev fallback (no FLW keys configured): keep the mock success flow.
+      // Dev fallback (no FLW keys configured): mock success flow.
       const firstTraveler = tripData?.travelers?.[0];
       const email = firstTraveler?.email || 'your@email.com';
       const handle = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
       const username = handle + '_' + Math.floor(100 + Math.random() * 900);
 
-      // Trust the SERVER's figures, not the client's.
-      setBooking((b) => ({ ...b, ref: data.ref, price: data.price, email, username, payType, dueNow: data.dueNow }));
-      showPage('success');
-    } catch (e) {
+      mergeBooking({ ref: data.ref, price: data.price, email, username, payType, dueNow: data.dueNow });
+      router.push('/plan/success');
+    } catch {
       showToast('Network error — please try again.');
     }
     setBusy(false);
@@ -95,7 +99,7 @@ export default function PaymentPage() {
           )}
         </div>
 
-        {/* Payment method (the hosted gateway page collects the actual details) */}
+        {/* Payment method */}
         <div style={{ marginTop: 24 }}>
           <label className="form-label">{t('methodLabel')}</label>
           <div className="method-grid">
@@ -125,7 +129,7 @@ export default function PaymentPage() {
         </div>
 
         <div className="step-nav">
-          <button className="btn-back" onClick={() => showPage('itinerary')} disabled={busy}>{t('back')}</button>
+          <button className="btn-back" onClick={() => router.push('/plan/itinerary')} disabled={busy}>{t('back')}</button>
           <button className="btn-next" onClick={handleConfirm} disabled={busy}>
             {busy ? '…' : t('confirmBook')}
           </button>

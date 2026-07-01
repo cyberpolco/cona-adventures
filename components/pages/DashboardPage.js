@@ -1,7 +1,8 @@
+'use client';
 // components/pages/DashboardPage.js
 import { useState, useEffect, useCallback } from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 // ─── Static data ──────────────────────────────────────────────────────────────
 

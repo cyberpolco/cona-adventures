@@ -1,6 +1,9 @@
+'use client';
 // components/pages/TripPlannerPage.js
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useApp } from '../../context/AppContext';
+import { getTripData, setTripData } from '../../lib/bookingSession';
 
 const TOTAL_STEPS = 8;
 
@@ -123,10 +126,11 @@ function TravelerForm({ index, isLead, isChild, data, onChange }) {
 }
 
 export default function TripPlannerPage() {
-  const { t, showPage, setTripData, tripData, showToast } = useApp();
+  const { t, showToast } = useApp();
+  const router = useRouter();
 
   const [step, setStep] = useState(1);
-  const [country, setCountry]   = useState(tripData?.country || null);
+  const [country, setCountry]   = useState(null);
   const [experiences, setExps]  = useState([]);
   const [adults, setAdults]     = useState(2);
   const [children, setChildren] = useState(0);
@@ -137,6 +141,12 @@ export default function TripPlannerPage() {
   const [transport, setTransport] = useState(null);
   const [services, setServices] = useState([]);
   const [travelers, setTravelers] = useState([{}]);
+
+  // Hydrate pre-selected country from sessionStorage (set by map/exp card on home).
+  useEffect(() => {
+    const saved = getTripData();
+    if (saved?.country) setCountry(saved.country);
+  }, []);
 
   const EXPERIENCES_BY_COUNTRY = {
     congo:   ['Kasai Jungle Camp', 'Congo River Expedition', 'Rainforest Zipline', 'Gorilla Trek', 'Cultural Village Visit'],
@@ -200,7 +210,7 @@ export default function TripPlannerPage() {
   function buildItinerary() {
     const data = { country, experiences, adults, children, arrival, departure, flexible, accommodation, transport, services, travelers, consent: true };
     setTripData(data);
-    showPage('itinerary');
+    router.push('/plan/itinerary');
   }
 
   const progress = ((step - 1) / (TOTAL_STEPS - 1)) * 100;

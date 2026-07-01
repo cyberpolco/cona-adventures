@@ -1,3 +1,4 @@
+'use client';
 // components/AfricaMap.js
 // D3-powered SVG map. Loads TopoJSON from CDN via useEffect (client only).
 import { useEffect, useRef, useState } from 'react';

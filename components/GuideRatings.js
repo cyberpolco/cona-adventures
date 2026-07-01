@@ -1,3 +1,4 @@
+'use client';
 // components/GuideRatings.js
 import { useState } from 'react';
 import { useApp } from '../context/AppContext';

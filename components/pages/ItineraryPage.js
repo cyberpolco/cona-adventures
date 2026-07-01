@@ -1,50 +1,57 @@
-// components/pages/ItineraryPage.js
+'use client';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useApp } from '../../context/AppContext';
 import { estimatePrice } from '../../lib/pricing';
+import { getTripData, setBooking } from '../../lib/bookingSession';
 
 function buildDays(tripData) {
   if (!tripData) return [];
-  const { country, experiences = [], arrival, departure, accommodation, transport } = tripData;
+  const { country, experiences = [], accommodation, transport } = tripData;
 
   const days = [];
   let dayNum = 1;
 
-  // Arrival day
   days.push({ day: dayNum++, icon: '✈️', title: 'Arrival & Transfer', desc: `Arrival at ${country === 'namibia' ? 'Windhoek (WDH)' : 'Kinshasa (FIH)'}. Airport transfer to ${accommodation || 'your lodge'}.` });
 
-  // Experience days
   experiences.forEach((exp) => {
     days.push({ day: dayNum++, icon: '🌟', title: exp, desc: `Full-day guided ${exp.toLowerCase()} experience with your expert guide and ${transport || 'private transport'}.` });
   });
 
-  // Rest / buffer day if multi-country
   if (country === 'both') {
     days.push({ day: dayNum++, icon: '🛫', title: 'Inter-Country Transfer', desc: 'Flight between DR Congo and Namibia. Brief rest and orientation at new base.' });
   }
 
-  // Departure
-  days.push({ day: dayNum++, icon: '🏡', title: 'Departure Day', desc: `Check-out and airport transfer. End of your CoNa Adventure.` });
+  days.push({ day: dayNum++, icon: '🏡', title: 'Departure Day', desc: 'Check-out and airport transfer. End of your CoNa Adventure.' });
 
   return days;
 }
 
 export default function ItineraryPage() {
-  const { t, tripData, showPage, setBooking } = useApp();
+  const { t } = useApp();
+  const router = useRouter();
+  const [tripData, setTripData] = useState(null);
+
+  useEffect(() => {
+    setTripData(getTripData());
+  }, []);
+
+  if (tripData === null) return null; // waiting for hydration
 
   const days  = buildDays(tripData);
   const price = estimatePrice(tripData);
 
   function handleProceed() {
     setBooking({ tripData, price, days });
-    showPage('payment');
+    router.push('/plan/payment');
   }
 
-  if (!tripData) {
+  if (!tripData?.country) {
     return (
       <div className="page-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
         <div style={{ textAlign: 'center' }}>
           <p style={{ color: 'var(--muted)', marginBottom: 16 }}>No itinerary yet — start by planning your trip.</p>
-          <button className="btn btn-primary" onClick={() => showPage('planner')}>Plan My Adventure</button>
+          <button className="btn btn-primary" onClick={() => router.push('/plan')}>Plan My Adventure</button>
         </div>
       </div>
     );
@@ -103,7 +110,7 @@ export default function ItineraryPage() {
 
         {/* Actions */}
         <div className="step-nav" style={{ marginTop: 24 }}>
-          <button className="btn-back" onClick={() => showPage('planner')}>{t('editTrip')}</button>
+          <button className="btn-back" onClick={() => router.push('/plan')}>{t('editTrip')}</button>
           <button className="btn-next" onClick={handleProceed}>{t('proceedBook')}</button>
         </div>
       </div>

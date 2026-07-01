@@ -1,3 +1,4 @@
+'use client';
 // components/LoginModal.js
 // SECURE login: credentials are verified on the server (NextAuth), and the
 // role comes back FROM the server inside the session. The old role-picker
@@ -5,7 +6,7 @@
 // privilege-escalation hole (OWASP A01).
 import { useState } from 'react';
 import { signIn, getSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useApp } from '../context/AppContext';
 
 // Demo staff accounts (seed in lib/users.server.js) — password: ChangeMe!2026

@@ -1,5 +1,7 @@
-// components/pages/HomePage.js
+'use client';
+import { useRouter } from 'next/navigation';
 import { useApp } from '../../context/AppContext';
+import { mergeTripData } from '../../lib/bookingSession';
 import AfricaMap from '../AfricaMap';
 import GuideRatings from '../GuideRatings';
 
@@ -13,11 +15,12 @@ const EXPERIENCES = [
 ];
 
 export default function HomePage() {
-  const { t, showPage, setTripData } = useApp();
+  const { t } = useApp();
+  const router = useRouter();
 
   function selectCountry(country) {
-    setTripData((prev) => ({ ...prev, country }));
-    showPage('planner');
+    mergeTripData({ country });
+    router.push('/plan');
   }
 
   return (
@@ -38,7 +41,7 @@ export default function HomePage() {
             <button
               className="btn btn-primary cinzel"
               style={{ padding: '13px 30px', fontSize: '0.82rem' }}
-              onClick={() => showPage('planner')}
+              onClick={() => router.push('/plan')}
             >
               ✦ {t('planAdventure')}
             </button>

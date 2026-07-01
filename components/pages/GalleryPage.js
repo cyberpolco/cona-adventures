@@ -1,3 +1,4 @@
+'use client';
 // components/pages/GalleryPage.js
 import { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';

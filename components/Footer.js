@@ -1,19 +1,17 @@
-// components/Footer.js
+'use client';
 import { useSession } from 'next-auth/react';
-import { useRouter }  from 'next/router';
+import { useRouter }  from 'next/navigation';
 import { useApp }     from '../context/AppContext';
 import LogoSeal       from './LogoSeal';
 
 const STAFF_ROLES = ['Super Admin', 'Operations Manager', 'Tour Guide', 'Driver'];
 
 export default function Footer() {
-  const { showPage, openLogin } = useApp();
-  const { data: session }       = useSession();
-  const router                  = useRouter();
+  const { openLogin } = useApp();
+  const { data: session } = useSession();
+  const router  = useRouter();
   const isStaff = STAFF_ROLES.includes(session?.user?.role);
 
-  // If already a staff member go straight to the dashboard; otherwise open
-  // the login modal so they can sign in and land there automatically.
   const handleDashboard = () => {
     if (isStaff) router.push('/dashboard');
     else         openLogin();
@@ -30,10 +28,10 @@ export default function Footer() {
       </div>
 
       <div className="footer-links">
-        <a onClick={() => showPage('home')}    role="button" tabIndex={0}>Home</a>
-        <a onClick={() => showPage('gallery')} role="button" tabIndex={0}>Gallery</a>
-        <a onClick={() => showPage('planner')} role="button" tabIndex={0}>Plan Trip</a>
-        <a onClick={() => showPage('contact')} role="button" tabIndex={0}>Contact</a>
+        <a onClick={() => router.push('/')}       role="button" tabIndex={0}>Home</a>
+        <a onClick={() => router.push('/gallery')} role="button" tabIndex={0}>Gallery</a>
+        <a onClick={() => router.push('/plan')}   role="button" tabIndex={0}>Plan Trip</a>
+        <a onClick={() => router.push('/contact')} role="button" tabIndex={0}>Contact</a>
         <a
           onClick={handleDashboard}
           role="button"

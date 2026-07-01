@@ -1,35 +1,55 @@
-// components/Nav.js
+'use client';
 import { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { useRouter } from 'next/router';
+import { useRouter, usePathname } from 'next/navigation';
 import { useApp } from '../context/AppContext';
 import LogoSeal from './LogoSeal';
 
 const STAFF_ROLES = ['Super Admin', 'Operations Manager', 'Tour Guide', 'Driver'];
 
 export default function Nav() {
-  const { t, lang, setLang, page, showPage, openLogin } = useApp();
+  const { t, lang, setLang, openLogin } = useApp();
   const { data: session } = useSession();
-  const router = useRouter();
+  const router   = useRouter();
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const isStaff = STAFF_ROLES.includes(session?.user?.role);
   const close = () => setMenuOpen(false);
 
   const links = [
-    { label: t('navHome'),    action: () => { showPage('home');    close(); }, active: page === 'home' },
-    { label: t('navExp'),     action: () => { showPage('home');    close(); setTimeout(() => document.getElementById('experiences')?.scrollIntoView({ behavior: 'smooth' }), 50); } },
-    { label: t('navGallery'), action: () => { showPage('gallery'); close(); }, active: page === 'gallery' },
-    { label: t('navPlan'),    action: () => { showPage('planner'); close(); }, active: page === 'planner' },
-    { label: t('navContact'), action: () => { showPage('contact'); close(); }, active: page === 'contact' },
+    { label: t('navHome'),    href: '/' },
+    { label: t('navExp'),     href: '/#experiences' },
+    { label: t('navGallery'), href: '/gallery' },
+    { label: t('navPlan'),    href: '/plan' },
+    { label: t('navContact'), href: '/contact' },
   ];
+
+  function handleLink(href) {
+    close();
+    if (href.startsWith('/#')) {
+      if (pathname !== '/') {
+        router.push('/');
+        setTimeout(() => document.getElementById('experiences')?.scrollIntoView({ behavior: 'smooth' }), 300);
+      } else {
+        document.getElementById('experiences')?.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
+    }
+    router.push(href);
+  }
+
+  function isActive(href) {
+    if (href === '/') return pathname === '/';
+    return pathname.startsWith(href);
+  }
 
   return (
     <>
       <nav className="nav">
         <button
           className="logo-wrap"
-          onClick={() => showPage('home')}
+          onClick={() => router.push('/')}
           aria-label="CoNa Adventures — go home"
           style={{ background: 'none', border: 'none' }}
         >
@@ -41,10 +61,10 @@ export default function Nav() {
           {links.map((lk) => (
             <a
               key={lk.label}
-              onClick={lk.action}
-              className={lk.active ? 'active' : ''}
+              onClick={() => handleLink(lk.href)}
+              className={isActive(lk.href) ? 'active' : ''}
               role="button" tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && lk.action()}
+              onKeyDown={(e) => e.key === 'Enter' && handleLink(lk.href)}
             >
               {lk.label}
             </a>
@@ -92,10 +112,10 @@ export default function Nav() {
             {links.map((lk) => (
               <a
                 key={lk.label}
-                onClick={lk.action}
-                className={lk.active ? 'active' : ''}
+                onClick={() => handleLink(lk.href)}
+                className={isActive(lk.href) ? 'active' : ''}
                 role="button" tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && lk.action()}
+                onKeyDown={(e) => e.key === 'Enter' && handleLink(lk.href)}
               >
                 {lk.label}
               </a>
