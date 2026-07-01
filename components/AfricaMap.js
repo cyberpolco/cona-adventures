@@ -43,7 +43,7 @@ export default function AfricaMap({ onCountrySelect }) {
 
       let world;
       try {
-        world = await d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');
+        world = await d3.json('/world-110m.json');
       } catch {
         // Fallback: render placeholder text
         svg.append('text')
