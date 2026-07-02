@@ -45,8 +45,10 @@ export default withAuth(
   }
 );
 
-// Run on all paths except: API routes, Next.js internals, static files,
-// Flutterwave callback, OG image, sitemap, robots, favicon.
+// Run on all paths except: API routes, Next.js internals, the Flutterwave
+// callback, generated metadata routes (OG image, icons, manifest, sitemap,
+// robots), and any path with a file extension (static assets under /public,
+// e.g. world-110m.json, favicon.ico) — those aren't locale-prefixable pages.
 export const config = {
-  matcher: ['/((?!api|_next|opengraph-image|sitemap|robots|favicon\\.ico|payment).*)'],
+  matcher: ['/((?!api|_next|opengraph-image|icon|apple-icon|manifest|sitemap|robots|payment|.*\\..*).*)'],
 };
