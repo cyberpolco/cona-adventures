@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Pinned to match this repo's Node 18 constraint (Prisma 5.22.0 is
+          # the last version supporting Node 18 — see CLAUDE.md).
+          node-version: '18'
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type-check + build
+        run: npm run build
+        env:
+          # Dummy values so `next build` doesn't fail resolving env vars during
+          # module evaluation. No page queries the DB or gateway at build time.
+          NEXTAUTH_SECRET: ci-placeholder-secret
+          NEXTAUTH_URL: http://localhost:3000
+          DATABASE_URL: file:./ci-placeholder.db
+
+      - name: Unit tests
+        run: npm test
