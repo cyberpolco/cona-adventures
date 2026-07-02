@@ -68,7 +68,7 @@ On Vercel: set all of the above in Settings → Environment Variables. `package.
 2. ~~**PII handling**~~ ✅ Done (2026-07-01) — consent checkbox in planner (step 8, per-traveler); checkout enforces `consent: true` (400 otherwise); DOB/nationality/isMinor/retainUntil stored per traveler; `passport` field always stripped from API; Ops/Admin see DOB+nationality for visa, Guides/Drivers do not; `lib/encrypt.server.js` ready for when passport uploads are added.
 3. Migrate **gallery submissions** and **guide ratings** off in-memory arrays to the existing tables.
 3. **P1 routing/SEO (high value):** move from the SPA-in-Next pattern to real routes (App Router), per-page metadata + OG tags, `sitemap.xml`, `robots.txt`, JSON-LD travel schema, `hreflang` for EN/FR.
-4. **P1 mobile nav**: add a hamburger menu (nav links are hidden ≤640px with no replacement).
+4. ~~**P1 mobile nav**~~ ✅ Done — hamburger menu in `Nav.js` (nav-links hide ≤640px, `.hamburger` shows), dropdown with all links, lang toggle, login/logout, outside-click/Escape to close. Verified in-browser 2026-07-01.
 5. **P2:** consistent accessibility (real `<button>`s, `aria-label` on meaningful emoji, skip link), migrate to TypeScript (types already installed), consolidate inline styles, self-host fonts (`next/font`) + map TopoJSON, add tests/CI.
 
 See the per-phase guides (`*-GUIDE.md`) in each folder for details and the original `PHASE-1-AUDIT.md` for the full reasoning.
