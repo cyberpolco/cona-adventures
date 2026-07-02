@@ -264,7 +264,7 @@ function BookingModal({ booking, onClose, toast }) {
   return (
     <div className="modal-overlay open" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()} style={{ width: 'min(500px, 94vw)' }}>
-        <button className="modal-close" onClick={onClose}>✕</button>
+        <button className="modal-close" onClick={onClose} aria-label="Close booking detail">✕</button>
         <div className="cinzel" style={{ color: 'var(--gold)', fontSize: '0.68rem', letterSpacing: '0.15em', marginBottom: 6 }}>
           BOOKING DETAIL
         </div>
@@ -326,7 +326,7 @@ function GuideView({ name, toast }) {
     <>
       {/* Welcome banner */}
       <div style={{ background: 'var(--card)', border: '1px solid #3E6B4A50', borderRadius: 10, padding: '14px 20px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 14 }}>
-        <div style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(135deg, #3E6B4A, #163026)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>
+        <div style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(135deg, #3E6B4A, #163026)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }} aria-hidden="true">
           🧭
         </div>
         <div style={{ flex: 1 }}>
@@ -353,7 +353,7 @@ function GuideView({ name, toast }) {
           { icon: '👥', val: '26',              label: 'Pax This Month', color: 'var(--teal)',  border: '#2C7A7040' },
         ].map(({ icon, val, label, color, border }) => (
           <div key={label} className="widget" style={{ borderColor: border }}>
-            <div style={{ fontSize: '1.2rem', marginBottom: 6 }}>{icon}</div>
+            <div style={{ fontSize: '1.2rem', marginBottom: 6 }} aria-hidden="true">{icon}</div>
             <div className="widget-val" style={{ color }}>{val}</div>
             <div className="widget-label">{label}</div>
           </div>
@@ -446,12 +446,12 @@ function GuideView({ name, toast }) {
         <div style={{ fontSize: '0.8rem', color: 'var(--muted)', marginBottom: 14 }}>
           Upload tour photos — approved images appear in the public gallery.
         </div>
-        <div className="gallery-upload-area" style={{ marginBottom: 14 }}
+        <button type="button" className="gallery-upload-area" style={{ marginBottom: 14 }}
           onClick={() => toast('File picker — connect a real input for production')}>
-          <div style={{ fontSize: '2rem', marginBottom: 8 }}>📷</div>
+          <div style={{ fontSize: '2rem', marginBottom: 8 }} aria-hidden="true">📷</div>
           <div style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>Click to select photos</div>
           <div style={{ fontSize: '0.68rem', color: 'var(--muted)', marginTop: 4 }}>JPG / PNG · max 10 MB each</div>
-        </div>
+        </button>
         <label className="form-label">Caption</label>
         <input style={inputSt} type="text"
           placeholder="e.g. Sunrise over Kasai River — Jul 2026"
@@ -491,7 +491,7 @@ function DriverView({ name, toast }) {
     <>
       {/* Welcome banner */}
       <div style={{ background: 'var(--card)', border: '1px solid #C0532F40', borderRadius: 10, padding: '14px 20px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 14 }}>
-        <div style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(135deg, #6b2a10, #2a1000)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }}>
+        <div style={{ width: 46, height: 46, borderRadius: '50%', background: 'linear-gradient(135deg, #6b2a10, #2a1000)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0 }} aria-hidden="true">
           🚗
         </div>
         <div style={{ flex: 1 }}>
@@ -513,7 +513,7 @@ function DriverView({ name, toast }) {
       {checklistOpen && (
         <div className="modal-overlay open" onClick={() => setChecklistOpen(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setChecklistOpen(false)}>✕</button>
+            <button className="modal-close" onClick={() => setChecklistOpen(false)} aria-label="Close checklist">✕</button>
             <div className="cinzel" style={{ color: 'var(--terra)', fontSize: '0.68rem', letterSpacing: '0.15em', marginBottom: 6 }}>
               PRE-DEPARTURE CHECKLIST
             </div>
@@ -571,7 +571,7 @@ function DriverView({ name, toast }) {
           { icon: '👥', val: '18',              label: 'Pax This Month', color: 'var(--teal)',  border: '#2C7A7040' },
         ].map(({ icon, val, label, color, border }) => (
           <div key={label} className="widget" style={{ borderColor: border }}>
-            <div style={{ fontSize: '1.2rem', marginBottom: 6 }}>{icon}</div>
+            <div style={{ fontSize: '1.2rem', marginBottom: 6 }} aria-hidden="true">{icon}</div>
             <div className="widget-val" style={{ color }}>{val}</div>
             <div className="widget-label">{label}</div>
           </div>
@@ -815,39 +815,39 @@ export default function DashboardPage() {
 
   // ── Guide / Driver short-circuit ──────────────────────────────────────────
   if (isGuide) return (
-    <div className="page-shell">
+    <main id="main-content" className="page-shell">
       <div className="dash-wrap">
         <Header />
         <GuideView name={name} toast={toast} />
         <ToastContainer toasts={toasts} />
       </div>
-    </div>
+    </main>
   );
 
   if (isDriver) return (
-    <div className="page-shell">
+    <main id="main-content" className="page-shell">
       <div className="dash-wrap">
         <Header />
         <DriverView name={name} toast={toast} />
         <ToastContainer toasts={toasts} />
       </div>
-    </div>
+    </main>
   );
 
   // ── Admin / Ops layout ────────────────────────────────────────────────────
   return (
-    <div className="page-shell">
+    <main id="main-content" className="page-shell">
       <div className="dash-wrap">
         <Header />
 
         {/* Tab bar */}
-        <div className="tab-bar">
+        <div className="tab-bar" role="tablist">
           {tabs.map(tb => (
-            <div key={tb.id}
+            <button key={tb.id}
+              type="button"
               className={`tab${tab === tb.id ? ' active' : ''}`}
               onClick={() => setTab(tb.id)}
-              role="tab" aria-selected={tab === tb.id} tabIndex={0}
-              onKeyDown={e => e.key === 'Enter' && setTab(tb.id)}>
+              role="tab" aria-selected={tab === tb.id}>
               {tb.label}
               {tb.id === 'bookings' && pendingCount > 0 && (
                 <span style={{ marginLeft: 5, background: 'var(--terra)', color: '#fff', borderRadius: 8, padding: '0 5px', fontSize: '0.6rem', fontWeight: 700 }}>
@@ -859,7 +859,7 @@ export default function DashboardPage() {
                   {partners.filter(p => p.status === 'pending').length}
                 </span>
               )}
-            </div>
+            </button>
           ))}
         </div>
 
@@ -882,7 +882,7 @@ export default function DashboardPage() {
                 { icon: '⏳', val: String(pendingCount),   label: 'Unassigned Tours', color: 'var(--terra)', border: '#C0532F40' },
               ]).map(({ icon, val, label, color, border }) => (
                 <div key={label} className="widget" style={{ borderColor: border }}>
-                  <div style={{ fontSize: '1.3rem', marginBottom: 8 }}>{icon}</div>
+                  <div style={{ fontSize: '1.3rem', marginBottom: 8 }} aria-hidden="true">{icon}</div>
                   <div className="widget-val" style={{ color }}>{val}</div>
                   <div className="widget-label">{label}</div>
                 </div>
@@ -1247,6 +1247,6 @@ export default function DashboardPage() {
         <BookingModal booking={selectedBooking} onClose={() => setSelectedBooking(null)} toast={toast} />
         <ToastContainer toasts={toasts} />
       </div>
-    </div>
+    </main>
   );
 }

@@ -56,7 +56,7 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="page-shell">
+    <main id="main-content" className="page-shell">
       <div className="pay-wrap">
         <div style={{ fontFamily: "'Cinzel', serif", fontSize: '1.2rem', fontWeight: 700, color: 'var(--sand)', marginBottom: 6 }}>
           {t('payTitle')}
@@ -135,6 +135,6 @@ export default function PaymentPage() {
           </button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

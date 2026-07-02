@@ -24,7 +24,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="page-shell">
+    <main id="main-content" className="page-shell">
       {/* HERO */}
       <section className="hero">
         <div className="hero-content">
@@ -68,21 +68,19 @@ export default function HomePage() {
 
       <div className="exp-grid">
         {EXPERIENCES.map((exp) => (
-          <div
+          <button
             key={exp.key}
+            type="button"
             className="exp-card"
             onClick={() => selectCountry(exp.country)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => e.key === 'Enter' && selectCountry(exp.country)}
           >
-            <div className="exp-img" style={{ background: exp.bg }}>{exp.emoji}</div>
+            <div className="exp-img" style={{ background: exp.bg }} aria-hidden="true">{exp.emoji}</div>
             <div className="exp-body">
               <h4>{t(exp.key)}</h4>
               <p>{t(`${exp.key}d`)}</p>
               <div className="exp-price">{exp.price}</div>
             </div>
-          </div>
+          </button>
         ))}
       </div>
 
@@ -100,40 +98,36 @@ export default function HomePage() {
         <div className="section-divider" />
       </div>
       <div className="country-grid">
-        <div
+        <button
+          type="button"
           className="c-card c-card-congo"
           onClick={() => selectCountry('congo')}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && selectCountry('congo')}
         >
           <h3 style={{ color: 'var(--teal)', marginBottom: 8, fontFamily: "'Cinzel', serif", fontSize: '0.9rem', letterSpacing: '0.1em' }}>
-            🌿 DR CONGO
+            <span aria-hidden="true">🌿</span> DR CONGO
           </h3>
           <p style={{ color: 'var(--muted)', fontSize: '0.8rem', marginBottom: 14, lineHeight: 1.6 }}>{t('congoDesc')}</p>
           <span className="tag tag-t">Rainforest</span>
           <span className="tag tag-t">River</span>
           <span className="tag tag-t">Culture</span>
           <span className="tag tag-t">Mountains</span>
-        </div>
+        </button>
 
-        <div
+        <button
+          type="button"
           className="c-card c-card-namibia"
           onClick={() => selectCountry('namibia')}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && selectCountry('namibia')}
         >
           <h3 style={{ color: '#e07050', marginBottom: 8, fontFamily: "'Cinzel', serif", fontSize: '0.9rem', letterSpacing: '0.1em' }}>
-            🏜 NAMIBIA
+            <span aria-hidden="true">🏜</span> NAMIBIA
           </h3>
           <p style={{ color: 'var(--muted)', fontSize: '0.8rem', marginBottom: 14, lineHeight: 1.6 }}>{t('namDesc')}</p>
           <span className="tag tag-o">Safari</span>
           <span className="tag tag-o">Self Drive</span>
           <span className="tag tag-o">Desert</span>
           <span className="tag tag-o">Wildlife</span>
-        </div>
+        </button>
       </div>
-    </div>
+    </main>
   );
 }

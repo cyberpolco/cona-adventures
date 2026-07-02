@@ -70,6 +70,7 @@ export default function Nav() {
 
   return (
     <div ref={menuRef}>
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       <nav className="nav">
         <button
           className="logo-wrap"
@@ -83,25 +84,23 @@ export default function Nav() {
 
         <div className="nav-links">
           {links.map((lk) => (
-            <a
+            <button
               key={lk.label}
+              type="button"
               onClick={() => handleLink(lk.href)}
               className={isActive(lk.href) ? 'active' : ''}
-              role="button" tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && handleLink(lk.href)}
             >
               {lk.label}
-            </a>
+            </button>
           ))}
           {isStaff && (
-            <a
+            <button
+              type="button"
               onClick={() => router.push('/dashboard')}
-              role="button" tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && router.push('/dashboard')}
               style={{ color: 'var(--gold)', fontWeight: 700 }}
             >
-              ⚡ Dashboard
-            </a>
+              <span aria-hidden="true">⚡</span> Dashboard
+            </button>
           )}
         </div>
 
@@ -143,24 +142,23 @@ export default function Nav() {
         <div id="mobile-nav" className="mobile-menu" role="dialog" aria-label="Navigation menu">
           <div className="mobile-menu-inner">
             {links.map((lk) => (
-              <a
+              <button
                 key={lk.label}
+                type="button"
                 onClick={() => handleLink(lk.href)}
                 className={isActive(lk.href) ? 'active' : ''}
-                role="button" tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && handleLink(lk.href)}
               >
                 {lk.label}
-              </a>
+              </button>
             ))}
             {isStaff && (
-              <a
+              <button
+                type="button"
                 onClick={() => { router.push('/dashboard'); close(); }}
-                role="button" tabIndex={0}
                 style={{ color: 'var(--gold)', fontWeight: 700 }}
               >
-                ⚡ Dashboard
-              </a>
+                <span aria-hidden="true">⚡</span> Dashboard
+              </button>
             )}
             <hr className="mobile-divider" />
             <div className="mobile-lang">

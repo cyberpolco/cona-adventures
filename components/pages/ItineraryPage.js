@@ -48,19 +48,19 @@ export default function ItineraryPage() {
 
   if (!tripData?.country) {
     return (
-      <div className="page-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
+      <main id="main-content" className="page-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
         <div style={{ textAlign: 'center' }}>
           <p style={{ color: 'var(--muted)', marginBottom: 16 }}>No itinerary yet — start by planning your trip.</p>
           <button className="btn btn-primary" onClick={() => router.push(`/${lang}/plan`)}>Plan My Adventure</button>
         </div>
-      </div>
+      </main>
     );
   }
 
   const countryLabel = { congo: '🌿 DR Congo', namibia: '🏜 Namibia', both: '✦ Both Countries' }[tripData.country] || '';
 
   return (
-    <div className="page-shell">
+    <main id="main-content" className="page-shell">
       <div className="itin-wrap">
         {/* Header */}
         <div className="itin-header">
@@ -100,7 +100,7 @@ export default function ItineraryPage() {
             <div className="day-num">D{d.day}</div>
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                <span>{d.icon}</span>
+                <span aria-hidden="true">{d.icon}</span>
                 <span style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--sand)' }}>{d.title}</span>
               </div>
               <p style={{ fontSize: '0.78rem', color: 'var(--muted)', lineHeight: 1.6 }}>{d.desc}</p>
@@ -114,6 +114,6 @@ export default function ItineraryPage() {
           <button className="btn-next" onClick={handleProceed}>{t('proceedBook')}</button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

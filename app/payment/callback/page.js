@@ -24,13 +24,13 @@ function CallbackInner() {
   }, [searchParams]);
 
   return (
-    <div className="page-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
+    <main id="main-content" className="page-shell" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
       <div style={{ textAlign: 'center', maxWidth: 460, padding: 24 }}>
         {s.loading && <p style={{ color: 'var(--muted)' }}>Confirming your payment…</p>}
 
         {!s.loading && s.ok && (
           <>
-            <div style={{ fontSize: '2.4rem', marginBottom: 10 }}>✅</div>
+            <div style={{ fontSize: '2.4rem', marginBottom: 10 }} aria-hidden="true">✅</div>
             <h2 style={{ fontFamily: "'Cinzel', serif", color: 'var(--sand)', marginBottom: 8 }}>Booking confirmed</h2>
             <p style={{ color: 'var(--muted)', marginBottom: 6 }}>
               Reference <strong style={{ color: 'var(--gold)' }}>{s.data.ref}</strong>
@@ -44,20 +44,20 @@ function CallbackInner() {
 
         {!s.loading && !s.ok && (
           <>
-            <div style={{ fontSize: '2.4rem', marginBottom: 10 }}>⚠️</div>
+            <div style={{ fontSize: '2.4rem', marginBottom: 10 }} aria-hidden="true">⚠️</div>
             <h2 style={{ fontFamily: "'Cinzel', serif", color: 'var(--sand)', marginBottom: 8 }}>Payment not confirmed</h2>
             <p style={{ color: 'var(--muted)', marginBottom: 20 }}>{s.msg || 'Please try again.'}</p>
             <button className="btn btn-primary" onClick={() => router.push('/')}>Back to Home</button>
           </>
         )}
       </div>
-    </div>
+    </main>
   );
 }
 
 export default function PaymentCallback() {
   return (
-    <Suspense fallback={<div className="page-shell" style={{ textAlign: 'center', paddingTop: 80 }}><p style={{ color: 'var(--muted)' }}>Loading…</p></div>}>
+    <Suspense fallback={<main id="main-content" className="page-shell" style={{ textAlign: 'center', paddingTop: 80 }}><p style={{ color: 'var(--muted)' }}>Loading…</p></main>}>
       <CallbackInner />
     </Suspense>
   );

@@ -16,19 +16,18 @@ function StarRating({ guideId, value, onChange, submitted }) {
   return (
     <div className="stars" aria-label={`Rating for guide ${guideId}`}>
       {[1, 2, 3, 4, 5].map((n) => (
-        <span
+        <button
           key={n}
+          type="button"
           className={`star${(hovered || value) >= n ? ' lit' : ''}`}
-          role="button"
           aria-label={`${n} star${n > 1 ? 's' : ''}`}
-          tabIndex={submitted ? -1 : 0}
-          onClick={() => !submitted && onChange(n)}
-          onMouseEnter={() => !submitted && setHovered(n)}
+          disabled={submitted}
+          onClick={() => onChange(n)}
+          onMouseEnter={() => setHovered(n)}
           onMouseLeave={() => setHovered(0)}
-          onKeyDown={(e) => e.key === 'Enter' && !submitted && onChange(n)}
         >
           ★
-        </span>
+        </button>
       ))}
     </div>
   );

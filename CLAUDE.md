@@ -69,7 +69,7 @@ On Vercel: set all of the above in Settings → Environment Variables. `package.
 3. Migrate **gallery submissions** and **guide ratings** off in-memory arrays to the existing tables.
 3. **P1 routing/SEO (high value):** move from the SPA-in-Next pattern to real routes (App Router), per-page metadata + OG tags, `sitemap.xml`, `robots.txt`, JSON-LD travel schema, `hreflang` for EN/FR.
 4. ~~**P1 mobile nav**~~ ✅ Done — hamburger menu in `Nav.js` (nav-links hide ≤640px, `.hamburger` shows), dropdown with all links, lang toggle, login/logout, outside-click/Escape to close. Verified in-browser 2026-07-01.
-5. **P2:** consistent accessibility (real `<button>`s, `aria-label` on meaningful emoji, skip link), migrate to TypeScript (types already installed), consolidate inline styles, self-host fonts (`next/font`) + map TopoJSON, add tests/CI.
+5. **P2:** ~~consistent accessibility (real `<button>`s, `aria-label`/`aria-hidden` on meaningful emoji, skip link, focus styles)~~ ✅ Done (2026-07-02) — role=button divs/spans across Nav/Footer/HomePage/GalleryPage/LoginModal/TripPlannerPage/GuideRatings/DashboardPage converted to real `<button>`; decorative emoji marked `aria-hidden`; icon-only close buttons given `aria-label`; skip-to-content link + `<main id="main-content">` landmark on every page; `:focus-visible` outline added site-wide. Custom role=checkbox/radio widgets (trip planner steps 2,4-7) intentionally left as-is (legitimate ARIA pattern, out of scope). Still open: migrate to TypeScript (types already installed), consolidate inline styles, self-host fonts (`next/font`) + map TopoJSON, add tests/CI.
 
 See the per-phase guides (`*-GUIDE.md`) in each folder for details and the original `PHASE-1-AUDIT.md` for the full reasoning.
 

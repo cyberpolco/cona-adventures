@@ -23,9 +23,9 @@ export default function SuccessPage() {
   }
 
   return (
-    <div className="page-shell success-wrap">
+    <main id="main-content" className="page-shell success-wrap">
       <div style={{ maxWidth: 520, width: '100%', textAlign: 'center' }}>
-        <div className="success-icon">🎉</div>
+        <div className="success-icon" aria-hidden="true">🎉</div>
 
         <h2 className="cinzel" style={{ fontSize: '1.7rem', marginBottom: 8, color: 'var(--gold)' }}>
           {t('bookConfirmed')}
@@ -42,7 +42,7 @@ export default function SuccessPage() {
         </div>
 
         <div className="email-toast">
-          📧 <span>Confirmation &amp; itinerary sent to {email}</span>
+          <span aria-hidden="true">📧</span> <span>Confirmation &amp; itinerary sent to {email}</span>
         </div>
 
         {username && (
@@ -86,6 +86,6 @@ export default function SuccessPage() {
           <button className="btn btn-outline" onClick={() => router.push('/dashboard')}>{t('viewDash')}</button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

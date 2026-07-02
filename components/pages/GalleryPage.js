@@ -37,7 +37,7 @@ export default function GalleryPage() {
   const approved = gallery.filter((i) => i.approved);
 
   return (
-    <div className="page-shell gallery-page-wrap">
+    <main id="main-content" className="page-shell gallery-page-wrap">
       <div className="section-head" style={{ paddingTop: 40 }}>
         <h2>{t('gallery')}</h2>
         <p className="subtitle">{t('gallerySub')}</p>
@@ -46,22 +46,20 @@ export default function GalleryPage() {
 
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
         {/* Upload area */}
-        <div
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={handleFileSubmit}
+        />
+        <button
+          type="button"
           className="gallery-upload-area"
           onClick={() => fileInputRef.current?.click()}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
           style={{ marginBottom: 30 }}
         >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            style={{ display: 'none' }}
-            onChange={handleFileSubmit}
-          />
-          <div style={{ fontSize: '2rem', marginBottom: 8 }}>📷</div>
+          <div style={{ fontSize: '2rem', marginBottom: 8 }} aria-hidden="true">📷</div>
           <div
             style={{
               fontFamily: "'Cinzel', serif",
@@ -74,7 +72,7 @@ export default function GalleryPage() {
             {t('submitPhoto')}
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>{t('submitPhotoSub')}</div>
-        </div>
+        </button>
 
         {/* Gallery grid */}
         <div className="gallery-grid">
@@ -87,12 +85,12 @@ export default function GalleryPage() {
               )}
               <div className="overlay">
                 <div style={{ fontWeight: 700, fontSize: '0.82rem', color: 'var(--sand)' }}>{item.label}</div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginTop: 2 }}>📷 {item.author}</div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginTop: 2 }}><span aria-hidden="true">📷</span> {item.author}</div>
               </div>
             </div>
           ))}
         </div>
       </div>
-    </div>
+    </main>
   );
 }

@@ -219,7 +219,7 @@ export default function TripPlannerPage() {
   const stepSubs   = ['s1s','s2s','',   '',   '',   '',   '',   's8s'].map(t);
 
   return (
-    <div className="page-shell">
+    <main id="main-content" className="page-shell">
       <div className="planner-wrap">
         <div className="progress-bar">
           <div className="progress-fill" style={{ width: `${progress}%` }} />
@@ -241,18 +241,17 @@ export default function TripPlannerPage() {
               { id: 'namibia', label: '🏜 Namibia',      sub: 'Desert & Safari' },
               { id: 'both',    label: '✦ Both Countries', sub: 'Grand Africa Journey' },
             ].map((c) => (
-              <div
+              <button
                 key={c.id}
+                type="button"
                 className={`radio-item${country === c.id ? ' sel' : ''}`}
                 onClick={() => setCountry(c.id)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && setCountry(c.id)}
+                aria-pressed={country === c.id}
               >
-                <div style={{ fontSize: '1.2rem', marginBottom: 4 }}>{c.label.split(' ')[0]}</div>
+                <div style={{ fontSize: '1.2rem', marginBottom: 4 }} aria-hidden="true">{c.label.split(' ')[0]}</div>
                 <div style={{ fontWeight: 700 }}>{c.label.replace(/^[^ ]+ /, '')}</div>
                 <div style={{ fontSize: '0.72rem', color: 'var(--muted)', marginTop: 2 }}>{c.sub}</div>
-              </div>
+              </button>
             ))}
           </div>
         )}
@@ -419,6 +418,6 @@ export default function TripPlannerPage() {
           </button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

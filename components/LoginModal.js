@@ -61,13 +61,13 @@ function SignInForm({ onSignup }) {
       </button>
       <div style={{ textAlign: 'center', marginTop: 14, fontSize: '0.72rem', color: 'var(--muted)' }}>
         New client?{' '}
-        <span
-          style={{ color: 'var(--gold)', cursor: 'pointer', fontWeight: 600 }}
-          onClick={onSignup} role="button" tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && onSignup()}
+        <button
+          type="button"
+          style={{ display: 'inline', background: 'none', border: 'none', padding: 0, font: 'inherit', color: 'var(--gold)', cursor: 'pointer', fontWeight: 600 }}
+          onClick={onSignup}
         >
           Create an account →
-        </span>
+        </button>
       </div>
       <div style={{ marginTop: 12, fontSize: '0.7rem', color: 'var(--muted)', textAlign: 'center' }}>
         Staff accounts are provisioned by an administrator.

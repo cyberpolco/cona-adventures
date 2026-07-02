@@ -138,9 +138,9 @@ export default function AfricaMap({ onCountrySelect }) {
         <div ref={tooltipRef} className="map-tooltip" />
       </div>
       <div className="map-cta-row">
-        <button className="map-btn-congo"   onClick={() => onCountrySelect?.('congo')}>🌿 DR CONGO</button>
-        <button className="map-btn-both"    onClick={() => onCountrySelect?.('both')}>✦ {t('bothCountries')}</button>
-        <button className="map-btn-namibia" onClick={() => onCountrySelect?.('namibia')}>🏜 NAMIBIA</button>
+        <button className="map-btn-congo"   onClick={() => onCountrySelect?.('congo')}><span aria-hidden="true">🌿</span> DR CONGO</button>
+        <button className="map-btn-both"    onClick={() => onCountrySelect?.('both')}><span aria-hidden="true">✦</span> {t('bothCountries')}</button>
+        <button className="map-btn-namibia" onClick={() => onCountrySelect?.('namibia')}><span aria-hidden="true">🏜</span> NAMIBIA</button>
       </div>
     </div>
   );

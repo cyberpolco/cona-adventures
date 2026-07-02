@@ -6,7 +6,7 @@ export default function ContactPage() {
   const { t } = useApp();
 
   return (
-    <div className="page-shell contact-page-wrap">
+    <main id="main-content" className="page-shell contact-page-wrap">
       <div className="section-head" style={{ paddingTop: 40 }}>
         <h2>{t('contactUs')}</h2>
         <p className="subtitle">{t('contactSub')}</p>
@@ -16,49 +16,49 @@ export default function ContactPage() {
       <div className="contact-grid" style={{ padding: '0 24px 60px', maxWidth: 900, margin: '0 auto' }}>
         {/* Congo Base */}
         <div className="contact-card">
-          <h3>🌿 CONGO BASE</h3>
+          <h3><span aria-hidden="true">🌿</span> CONGO BASE</h3>
           <div className="contact-row">
-            <span className="contact-icon">📍</span>
+            <span className="contact-icon" aria-hidden="true">📍</span>
             <div>Avenue Kasa-Vubu, Mbuji-Mayi<br />Kasaï-Oriental, DR Congo</div>
           </div>
           <div className="contact-row">
-            <span className="contact-icon">📞</span>
+            <span className="contact-icon" aria-hidden="true">📞</span>
             <div>+243 81 55 19 000</div>
           </div>
           <div className="contact-row">
-            <span className="contact-icon">✉️</span>
+            <span className="contact-icon" aria-hidden="true">✉️</span>
             <div>congo@conaadventures.com</div>
           </div>
-          <div className="map-placeholder">📍 Mbuji-Mayi, Kasaï-Oriental</div>
+          <div className="map-placeholder"><span aria-hidden="true">📍</span> Mbuji-Mayi, Kasaï-Oriental</div>
         </div>
 
         {/* Namibia Base */}
         <div className="contact-card">
-          <h3>🏜 NAMIBIA BASE</h3>
+          <h3><span aria-hidden="true">🏜</span> NAMIBIA BASE</h3>
           <div className="contact-row">
-            <span className="contact-icon">📍</span>
+            <span className="contact-icon" aria-hidden="true">📍</span>
             <div>14 Independence Avenue<br />Windhoek, Namibia</div>
           </div>
           <div className="contact-row">
-            <span className="contact-icon">📞</span>
+            <span className="contact-icon" aria-hidden="true">📞</span>
             <div>+264 61 22 04 000</div>
           </div>
           <div className="contact-row">
-            <span className="contact-icon">✉️</span>
+            <span className="contact-icon" aria-hidden="true">✉️</span>
             <div>namibia@conaadventures.com</div>
           </div>
-          <div className="map-placeholder">📍 Windhoek, Namibia</div>
+          <div className="map-placeholder"><span aria-hidden="true">📍</span> Windhoek, Namibia</div>
         </div>
 
         {/* Social / General */}
         <div className="contact-card" style={{ gridColumn: '1 / -1' }}>
           <h3>CONNECT WITH US</h3>
           <div className="contact-row">
-            <span className="contact-icon">✉️</span>
+            <span className="contact-icon" aria-hidden="true">✉️</span>
             <div>hello@conaadventures.com · bookings@conaadventures.com</div>
           </div>
           <div className="contact-row">
-            <span className="contact-icon">🌐</span>
+            <span className="contact-icon" aria-hidden="true">🌐</span>
             <div>www.conaadventures.com</div>
           </div>
           <div className="social-links">
@@ -69,6 +69,6 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

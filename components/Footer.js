@@ -28,25 +28,24 @@ export default function Footer() {
       </div>
 
       <div className="footer-links">
-        <a onClick={() => router.push(`/${lang}`)}          role="button" tabIndex={0}>Home</a>
-        <a onClick={() => router.push(`/${lang}/gallery`)}  role="button" tabIndex={0}>Gallery</a>
-        <a onClick={() => router.push(`/${lang}/plan`)}     role="button" tabIndex={0}>Plan Trip</a>
-        <a onClick={() => router.push(`/${lang}/contact`)}  role="button" tabIndex={0}>Contact</a>
-        <a
+        <button type="button" onClick={() => router.push(`/${lang}`)}>Home</button>
+        <button type="button" onClick={() => router.push(`/${lang}/gallery`)}>Gallery</button>
+        <button type="button" onClick={() => router.push(`/${lang}/plan`)}>Plan Trip</button>
+        <button type="button" onClick={() => router.push(`/${lang}/contact`)}>Contact</button>
+        <button
+          type="button"
           onClick={handleDashboard}
-          role="button"
-          tabIndex={0}
           style={isStaff ? { color: 'var(--gold)', fontWeight: 700 } : {}}
         >
-          {isStaff ? '⚡ Dashboard' : 'Dashboard'}
-        </a>
+          {isStaff ? <><span aria-hidden="true">⚡</span> Dashboard</> : 'Dashboard'}
+        </button>
       </div>
 
       <div className="footer-social">
-        <a role="button" tabIndex={0}>▶ YouTube</a>
-        <a role="button" tabIndex={0}>𝕏 Twitter</a>
-        <a role="button" tabIndex={0}>📷 Instagram</a>
-        <a role="button" tabIndex={0}>📘 Facebook</a>
+        <a href="#" aria-label="YouTube"><span aria-hidden="true">▶</span> YouTube</a>
+        <a href="#" aria-label="X / Twitter"><span aria-hidden="true">𝕏</span> Twitter</a>
+        <a href="#" aria-label="Instagram"><span aria-hidden="true">📷</span> Instagram</a>
+        <a href="#" aria-label="Facebook"><span aria-hidden="true">📘</span> Facebook</a>
       </div>
 
       <div className="footer-copy-full cinzel">
