@@ -1,4 +1,4 @@
-// lib/emails/bookingConfirmed.js
+// lib/emails/bookingConfirmed.ts
 // Returns an HTML string for the booking confirmation email.
 // Keep inline styles — email clients strip <style> blocks.
 
@@ -10,11 +10,11 @@ const CARD   = '#152010';
 const MUTED  = '#8a9a8a';
 const WHITE  = '#f0f0e8';
 
-function flag(country) {
+function flag(country: string | null | undefined): string {
   return country?.toLowerCase().includes('namibia') ? '🏜' : '🌿';
 }
 
-function formatCountry(country) {
+function formatCountry(country: string | null | undefined): string {
   if (!country) return 'Your destination';
   return country.toLowerCase() === 'namibia'
     ? 'Namibia'
@@ -25,23 +25,22 @@ function formatCountry(country) {
     : country;
 }
 
-/**
- * @param {{
- *   ref: string,
- *   country: string,
- *   adults: number,
- *   children: number,
- *   experiences: string[],
- *   accommodation: string|null,
- *   payType: string,
- *   priceTotal: number,
- *   priceCharged: number,
- *   currency: string,
- *   leadName: string,
- *   leadEmail: string,
- * }} booking
- */
-export function bookingConfirmedHtml(booking) {
+export interface BookingEmailData {
+  ref: string;
+  country: string;
+  adults: number;
+  children: number;
+  experiences: string[];
+  accommodation: string | null;
+  payType: string;
+  priceTotal: number;
+  priceCharged: number;
+  currency: string;
+  leadName: string;
+  leadEmail: string;
+}
+
+export function bookingConfirmedHtml(booking: BookingEmailData): string {
   const {
     ref, country, adults, children,
     experiences = [], accommodation,

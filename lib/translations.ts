@@ -1,7 +1,7 @@
-// lib/translations.js
+// lib/translations.ts
 // EN and FR translation strings for CoNa Adventures
 
-export const translations = {
+export const translations: Record<'en' | 'fr', Record<string, string>> = {
   en: {
     navHome: 'Home', navExp: 'Experiences', navGallery: 'Gallery',
     navPlan: 'Plan Trip', navContact: 'Contact',

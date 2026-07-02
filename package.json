@@ -23,6 +23,7 @@
     "topojson-client": "^3.1.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/d3": "^7.4.0",
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.0",

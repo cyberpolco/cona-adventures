@@ -1,18 +1,18 @@
-// lib/encrypt.server.js — SERVER ONLY. Never import client-side.
+// lib/encrypt.server.ts — SERVER ONLY. Never import client-side.
 // AES-256-GCM encryption for sensitive field references (e.g. passport storage keys).
 // Set ENCRYPTION_KEY to a 64-char hex string: openssl rand -hex 32
 import crypto from 'crypto';
 
 const ALGO = 'aes-256-gcm';
 
-function getKey() {
+function getKey(): Buffer {
   const k = process.env.ENCRYPTION_KEY;
   if (!k || k.length !== 64) throw new Error('ENCRYPTION_KEY must be a 64-char hex string');
   return Buffer.from(k, 'hex');
 }
 
 // Returns "iv.tag.ciphertext" — safe to store as a DB string.
-export function encrypt(plaintext) {
+export function encrypt(plaintext: string): string {
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv(ALGO, getKey(), iv);
   const encrypted = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
@@ -21,15 +21,15 @@ export function encrypt(plaintext) {
 }
 
 // Reverses encrypt(). Throws on tampered ciphertext (GCM auth tag mismatch).
-export function decrypt(ciphertext) {
+export function decrypt(ciphertext: string): string {
   const [ivHex, tagHex, dataHex] = ciphertext.split('.');
   const decipher = crypto.createDecipheriv(ALGO, getKey(), Buffer.from(ivHex, 'hex'));
   decipher.setAuthTag(Buffer.from(tagHex, 'hex'));
-  return decipher.update(Buffer.from(dataHex, 'hex'), null, 'utf8') + decipher.final('utf8');
+  return decipher.update(Buffer.from(dataHex, 'hex')).toString('utf8') + decipher.final('utf8');
 }
 
 // Safe wrapper: returns null if key is unset (dev mode) rather than throwing.
-export function encryptIfConfigured(plaintext) {
+export function encryptIfConfigured(plaintext: string): string {
   if (!process.env.ENCRYPTION_KEY) return plaintext; // dev fallback — warn in prod
   return encrypt(plaintext);
 }

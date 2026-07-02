@@ -1,11 +1,19 @@
-// lib/bookings.server.js — SERVER ONLY.
+// lib/bookings.server.ts — SERVER ONLY.
 import { prisma } from './prisma';
 import { sendEmail } from './email.server';
 import { bookingConfirmedHtml } from './emails/bookingConfirmed';
 
+export interface MarkBookingPaidInput {
+  conaRef: string | undefined;
+  txRef: string;
+  transactionId: string | number | undefined;
+  amount: number;
+  currency: string;
+}
+
 // Idempotent: calling it twice with the same ref/transactionId is safe.
 // Sends a confirmation email only on the first successful transition (pending → paid).
-export async function markBookingPaid({ conaRef, txRef, transactionId, amount, currency }) {
+export async function markBookingPaid({ conaRef, txRef, transactionId, amount, currency }: MarkBookingPaidInput): Promise<void> {
   if (!conaRef) return;
   try {
     const [bookingResult] = await prisma.$transaction([
@@ -33,7 +41,7 @@ export async function markBookingPaid({ conaRef, txRef, transactionId, amount, c
     const leadEmail = lead?.email;
     if (!leadEmail) return; // no email address on record — skip silently
 
-    const experiences = (() => {
+    const experiences: string[] = (() => {
       try { return JSON.parse(booking.experiences || '[]'); }
       catch { return []; }
     })();
@@ -57,6 +65,6 @@ export async function markBookingPaid({ conaRef, txRef, transactionId, amount, c
       }),
     });
   } catch (e) {
-    console.error('markBookingPaid failed:', e.message);
+    console.error('markBookingPaid failed:', (e as Error).message);
   }
 }

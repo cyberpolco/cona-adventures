@@ -1,5 +1,8 @@
-// lib/pii.server.js — SERVER ONLY.
+// lib/pii.server.ts — SERVER ONLY.
 // PII policy: retention rules, minor detection, field-level redaction by role.
+import { ROLES } from './auth';
+
+type Role = (typeof ROLES)[keyof typeof ROLES];
 
 export const CONSENT_VERSION = 'v1-2026-07';
 
@@ -12,16 +15,16 @@ export const RETENTION = {
 };
 
 // Returns true if the traveler is under 18 at their travel date.
-export function isMinorAtTravel(dobStr, travelDateStr) {
+export function isMinorAtTravel(dobStr: string | null | undefined, travelDateStr: string | null | undefined): boolean {
   if (!dobStr) return false;
   const dob    = new Date(dobStr);
   const travel = travelDateStr ? new Date(travelDateStr) : new Date();
-  const ageMs  = travel - dob;
+  const ageMs  = travel.getTime() - dob.getTime();
   return ageMs / (365.25 * 24 * 60 * 60 * 1000) < 18;
 }
 
 // Returns the Date after which this traveler's PII should be purged.
-export function computeRetainUntil(travelDateStr, isMinor) {
+export function computeRetainUntil(travelDateStr: string | null | undefined, isMinor: boolean): Date {
   const base = travelDateStr ? new Date(travelDateStr) : new Date();
   const days = isMinor ? RETENTION.MINOR_DAYS : RETENTION.STANDARD_DAYS;
   return new Date(base.getTime() + days * 24 * 60 * 60 * 1000);
@@ -33,14 +36,16 @@ const ALWAYS_STRIP = ['passport', 'guardianName', 'guardianConsentAt'];
 // Fields available to Ops for visa processing (not available to Guides/Drivers).
 const OPS_VISIBLE  = ['dob', 'nationality', 'isMinor'];
 
+export type TravelerLike = Record<string, unknown>;
+
 // Returns a traveler object with sensitive fields redacted by role.
 // Super Admin: sees dob/nationality/isMinor; passport reference always hidden.
 // Operations Manager: same as Super Admin (needs dob/nationality for visa processing).
 // All other roles: dob, nationality, isMinor also stripped.
-export function redactTraveler(traveler, role) {
+export function redactTraveler(traveler: TravelerLike | null | undefined, role: Role): TravelerLike | null {
   if (!traveler) return null;
 
-  const canSeeVisa = role === 'Super Admin' || role === 'Operations Manager';
+  const canSeeVisa = role === ROLES.ADMIN || role === ROLES.OPS;
 
   return Object.fromEntries(
     Object.entries(traveler).filter(([k]) => {

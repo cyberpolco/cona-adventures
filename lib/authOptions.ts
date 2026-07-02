@@ -1,8 +1,9 @@
-// lib/authOptions.js — shared NextAuth config for both Pages API route and App Router.
+// lib/authOptions.ts — shared NextAuth config for both Pages API route and App Router.
+import type { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { verifyUser } from './users.server';
 
-export const authOptions = {
+export const authOptions: AuthOptions = {
   session: { strategy: 'jwt' },
   providers: [
     CredentialsProvider({

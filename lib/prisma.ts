@@ -1,7 +1,7 @@
-// lib/prisma.js — singleton Prisma client (prevents hot-reload from spawning many clients).
+// lib/prisma.ts — singleton Prisma client (prevents hot-reload from spawning many clients).
 import { PrismaClient } from '@prisma/client';
 
-const globalForPrisma = globalThis;
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient();
 
