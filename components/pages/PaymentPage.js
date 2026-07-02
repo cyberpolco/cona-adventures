@@ -58,7 +58,7 @@ export default function PaymentPage() {
   return (
     <main id="main-content" className="page-shell">
       <div className="pay-wrap">
-        <div style={{ fontFamily: "'Cinzel', serif", fontSize: '1.2rem', fontWeight: 700, color: 'var(--sand)', marginBottom: 6 }}>
+        <div style={{ fontFamily: "var(--font-cinzel), serif", fontSize: '1.2rem', fontWeight: 700, color: 'var(--sand)', marginBottom: 6 }}>
           {t('payTitle')}
         </div>
         <p style={{ color: 'var(--muted)', fontSize: '0.8rem', marginBottom: 24 }}>{t('paySubtitle')}</p>

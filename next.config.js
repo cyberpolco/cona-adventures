@@ -4,12 +4,13 @@
 // - script-src: 'unsafe-inline' required by Next.js Pages Router hydration inline scripts.
 //   Upgrade path: per-request nonce in _document.js + middleware, then drop unsafe-inline.
 // - style-src: 'unsafe-inline' required by inline style props used throughout.
-// - Google Fonts entries: remove once next/font (self-hosted) is adopted (backlog item).
+// - Fonts are self-hosted via next/font (app/layout.tsx) — no Google Fonts CDN
+//   entries needed in style-src/font-src anymore.
 const CSP = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline'",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' https://fonts.gstatic.com",
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self'",
   "img-src 'self' data: blob:",
   "connect-src 'self'",
   "frame-src 'none'",

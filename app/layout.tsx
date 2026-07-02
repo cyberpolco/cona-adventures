@@ -1,7 +1,23 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
+import { Cinzel, Archivo } from 'next/font/google';
 import '../styles/globals.css';
 import { SITE_URL } from '../lib/siteUrl';
+
+// Self-hosted via next/font — no Google Fonts CDN request, no render-blocking
+// <link>, no font-swap layout shift (next/font inlines a matched fallback).
+const cinzel = Cinzel({
+  subsets: ['latin'],
+  weight: ['400', '600', '700', '900'],
+  variable: '--font-cinzel',
+  display: 'swap',
+});
+const archivo = Archivo({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-archivo',
+  display: 'swap',
+});
 
 // Minimal root layout — just the HTML shell and fonts.
 // All page-level metadata lives in app/[lang]/layout.tsx.
@@ -15,15 +31,9 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${cinzel.variable} ${archivo.variable}`}>
       <head>
         <meta charSet="UTF-8" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Archivo:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
       </head>
       <body>
         {children}

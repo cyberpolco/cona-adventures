@@ -35,7 +35,7 @@ export default function SuccessPage() {
         </p>
 
         <div className="ref-box">
-          <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginBottom: 4, fontFamily: "'Cinzel', serif", letterSpacing: '0.12em' }}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--muted)', marginBottom: 4, fontFamily: "var(--font-cinzel), serif", letterSpacing: '0.12em' }}>
             {t('bookRef')}
           </div>
           <div className="ref-num">{ref}</div>
@@ -47,11 +47,11 @@ export default function SuccessPage() {
 
         {username && (
           <div className="credentials-box">
-            <div style={{ fontFamily: "'Cinzel', serif", fontSize: '0.72rem', color: 'var(--gold)', letterSpacing: '0.1em', marginBottom: 12 }}>
+            <div style={{ fontFamily: "var(--font-cinzel), serif", fontSize: '0.72rem', color: 'var(--gold)', letterSpacing: '0.1em', marginBottom: 12 }}>
               YOUR PORTAL ACCESS
             </div>
             <div style={{ fontSize: '0.8rem', color: 'var(--muted)', marginBottom: 6 }}>Username</div>
-            <div style={{ fontWeight: 700, color: 'var(--sand)', marginBottom: 12, fontFamily: "'Cinzel', serif" }}>
+            <div style={{ fontWeight: 700, color: 'var(--sand)', marginBottom: 12, fontFamily: "var(--font-cinzel), serif" }}>
               @{username}
             </div>
             <div style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
@@ -66,7 +66,7 @@ export default function SuccessPage() {
             background: 'var(--card)', borderRadius: 10, padding: 20,
             border: '1px solid var(--border)', textAlign: 'left', margin: '14px 0',
           }}>
-            <div style={{ fontFamily: "'Cinzel', serif", fontSize: '0.72rem', color: 'var(--muted)', letterSpacing: '0.1em', marginBottom: 12 }}>TRIP SUMMARY</div>
+            <div style={{ fontFamily: "var(--font-cinzel), serif", fontSize: '0.72rem', color: 'var(--muted)', letterSpacing: '0.1em', marginBottom: 12 }}>TRIP SUMMARY</div>
             {[
               { label: 'Destination', value: { congo: '🌿 DR Congo', namibia: '🏜 Namibia', both: '✦ Both' }[booking.tripData.country] },
               { label: 'Travelers',   value: `${booking.tripData.adults} adult${booking.tripData.adults > 1 ? 's' : ''}${booking.tripData.children > 0 ? ` + ${booking.tripData.children} children` : ''}` },

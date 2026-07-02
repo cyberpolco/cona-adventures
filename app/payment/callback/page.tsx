@@ -43,7 +43,7 @@ function CallbackInner() {
         {!s.loading && s.ok && (
           <>
             <div style={{ fontSize: '2.4rem', marginBottom: 10 }} aria-hidden="true">✅</div>
-            <h2 style={{ fontFamily: "'Cinzel', serif", color: 'var(--sand)', marginBottom: 8 }}>Booking confirmed</h2>
+            <h2 style={{ fontFamily: "var(--font-cinzel), serif", color: 'var(--sand)', marginBottom: 8 }}>Booking confirmed</h2>
             <p style={{ color: 'var(--muted)', marginBottom: 6 }}>
               Reference <strong style={{ color: 'var(--gold)' }}>{s.data?.ref}</strong>
             </p>
@@ -57,7 +57,7 @@ function CallbackInner() {
         {!s.loading && !s.ok && (
           <>
             <div style={{ fontSize: '2.4rem', marginBottom: 10 }} aria-hidden="true">⚠️</div>
-            <h2 style={{ fontFamily: "'Cinzel', serif", color: 'var(--sand)', marginBottom: 8 }}>Payment not confirmed</h2>
+            <h2 style={{ fontFamily: "var(--font-cinzel), serif", color: 'var(--sand)', marginBottom: 8 }}>Payment not confirmed</h2>
             <p style={{ color: 'var(--muted)', marginBottom: 20 }}>{s.msg || 'Please try again.'}</p>
             <button className="btn btn-primary" onClick={() => router.push('/')}>Back to Home</button>
           </>

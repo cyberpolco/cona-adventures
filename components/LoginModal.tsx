@@ -56,7 +56,7 @@ function SignInForm({ onSignup }: { onSignup: () => void }) {
       />
       <button
         className="btn-next" disabled={busy}
-        style={{ width: '100%', fontFamily: "'Cinzel', serif", letterSpacing: '0.08em' }}
+        style={{ width: '100%', fontFamily: "var(--font-cinzel), serif", letterSpacing: '0.08em' }}
         onClick={submit}
       >
         {busy ? '…' : '✦ Sign In'}
@@ -99,7 +99,7 @@ function SignupForm({ onBack }: { onBack: () => void }) {
       >
         ← Back
       </button>
-      <div style={{ fontFamily: "'Cinzel', serif", fontSize: '0.72rem', color: 'var(--gold)', letterSpacing: '0.1em', marginBottom: 16 }}>
+      <div style={{ fontFamily: "var(--font-cinzel), serif", fontSize: '0.72rem', color: 'var(--gold)', letterSpacing: '0.1em', marginBottom: 16 }}>
         CREATE CLIENT ACCOUNT
       </div>
       <label className="form-label">Full Name</label>
@@ -108,7 +108,7 @@ function SignupForm({ onBack }: { onBack: () => void }) {
       <input type="email" placeholder="your@email.com" value={email} onChange={(e) => setEmail(e.target.value)} style={{ marginBottom: 10 }} />
       <label className="form-label">Password</label>
       <input type="password" placeholder="Min. 8 characters" value={pass} onChange={(e) => setPass(e.target.value)} style={{ marginBottom: 18 }} />
-      <button className="btn-next" style={{ width: '100%', fontFamily: "'Cinzel', serif", letterSpacing: '0.08em' }} onClick={submit}>
+      <button className="btn-next" style={{ width: '100%', fontFamily: "var(--font-cinzel), serif", letterSpacing: '0.08em' }} onClick={submit}>
         ✦ Create Account
       </button>
     </>

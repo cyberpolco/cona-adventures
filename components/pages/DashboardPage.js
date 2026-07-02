@@ -456,7 +456,7 @@ function GuideView({ name, toast }) {
         <input style={inputSt} type="text"
           placeholder="e.g. Sunrise over Kasai River — Jul 2026"
           value={photoCaption} onChange={e => setPhotoCaption(e.target.value)} />
-        <button className="btn btn-primary" style={{ width: '100%', fontFamily: "'Cinzel', serif", letterSpacing: '0.08em' }}
+        <button className="btn btn-primary" style={{ width: '100%', fontFamily: "var(--font-cinzel), serif", letterSpacing: '0.08em' }}
           onClick={submitPhoto}>
           {submitted ? '✓ Submitted for Review' : '✦ Submit Photo'}
         </button>
@@ -554,7 +554,7 @@ function DriverView({ name, toast }) {
               </div>
             ))}
 
-            <button className="btn btn-primary" style={{ width: '100%', marginTop: 18, fontFamily: "'Cinzel', serif", letterSpacing: '0.08em' }}
+            <button className="btn btn-primary" style={{ width: '100%', marginTop: 18, fontFamily: "var(--font-cinzel), serif", letterSpacing: '0.08em' }}
               onClick={() => { toast('Checklist saved — vehicle signed off for departure'); setChecklistOpen(false); }}>
               Sign Off &amp; Save
             </button>
@@ -1190,7 +1190,7 @@ export default function DashboardPage() {
               <input style={{ ...inputSt, marginBottom: 18 }} type="email" placeholder="email@conaadventures.com"
                 value={newEmail} onChange={e => setNewEmail(e.target.value)} />
               <button className="btn btn-primary" onClick={createUser}
-                style={{ width: '100%', fontFamily: "'Cinzel', serif", letterSpacing: '0.08em' }}>
+                style={{ width: '100%', fontFamily: "var(--font-cinzel), serif", letterSpacing: '0.08em' }}>
                 ✦ Create Account &amp; Send Credentials
               </button>
             </Card>

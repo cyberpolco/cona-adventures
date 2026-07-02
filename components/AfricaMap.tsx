@@ -141,7 +141,7 @@ export default function AfricaMap({ onCountrySelect }: { onCountrySelect?: (coun
           fontSize: '0.75rem',
           marginBottom: 8,
           letterSpacing: '0.1em',
-          fontFamily: "'Cinzel', serif",
+          fontFamily: "var(--font-cinzel), serif",
         }}
       >
         {t('clickCountry')}

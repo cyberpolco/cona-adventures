@@ -62,7 +62,7 @@ export default function GalleryPage() {
           <div style={{ fontSize: '2rem', marginBottom: 8 }} aria-hidden="true">📷</div>
           <div
             style={{
-              fontFamily: "'Cinzel', serif",
+              fontFamily: "var(--font-cinzel), serif",
               fontSize: '0.82rem',
               color: 'var(--gold)',
               letterSpacing: '0.08em',

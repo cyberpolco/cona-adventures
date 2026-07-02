@@ -103,7 +103,7 @@ export default function HomePage() {
           className="c-card c-card-congo"
           onClick={() => selectCountry('congo')}
         >
-          <h3 style={{ color: 'var(--teal)', marginBottom: 8, fontFamily: "'Cinzel', serif", fontSize: '0.9rem', letterSpacing: '0.1em' }}>
+          <h3 style={{ color: 'var(--teal)', marginBottom: 8, fontFamily: "var(--font-cinzel), serif", fontSize: '0.9rem', letterSpacing: '0.1em' }}>
             <span aria-hidden="true">🌿</span> DR CONGO
           </h3>
           <p style={{ color: 'var(--muted)', fontSize: '0.8rem', marginBottom: 14, lineHeight: 1.6 }}>{t('congoDesc')}</p>
@@ -118,7 +118,7 @@ export default function HomePage() {
           className="c-card c-card-namibia"
           onClick={() => selectCountry('namibia')}
         >
-          <h3 style={{ color: '#e07050', marginBottom: 8, fontFamily: "'Cinzel', serif", fontSize: '0.9rem', letterSpacing: '0.1em' }}>
+          <h3 style={{ color: '#e07050', marginBottom: 8, fontFamily: "var(--font-cinzel), serif", fontSize: '0.9rem', letterSpacing: '0.1em' }}>
             <span aria-hidden="true">🏜</span> NAMIBIA
           </h3>
           <p style={{ color: 'var(--muted)', fontSize: '0.8rem', marginBottom: 14, lineHeight: 1.6 }}>{t('namDesc')}</p>

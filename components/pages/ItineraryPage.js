@@ -65,10 +65,10 @@ export default function ItineraryPage() {
         {/* Header */}
         <div className="itin-header">
           <div>
-            <div style={{ fontSize: '0.72rem', color: 'var(--muted)', letterSpacing: '0.12em', fontFamily: "'Cinzel', serif", marginBottom: 6 }}>
+            <div style={{ fontSize: '0.72rem', color: 'var(--muted)', letterSpacing: '0.12em', fontFamily: "var(--font-cinzel), serif", marginBottom: 6 }}>
               {t('yourItin')}
             </div>
-            <div style={{ fontFamily: "'Cinzel', serif", fontSize: '1.1rem', fontWeight: 700, color: 'var(--sand)', marginBottom: 4 }}>
+            <div style={{ fontFamily: "var(--font-cinzel), serif", fontSize: '1.1rem', fontWeight: 700, color: 'var(--sand)', marginBottom: 4 }}>
               {countryLabel} {t('adventure')}
             </div>
             <div style={{ fontSize: '0.78rem', color: 'var(--muted)' }}>
@@ -87,7 +87,7 @@ export default function ItineraryPage() {
         {/* Experience highlights */}
         {tripData.experiences?.length > 0 && (
           <div style={{ marginBottom: 16, padding: '14px 18px', background: 'var(--card2)', borderRadius: 10, border: '1px solid var(--border)' }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--muted)', marginBottom: 8, fontFamily: "'Cinzel', serif", letterSpacing: '0.08em' }}>INCLUDED EXPERIENCES</div>
+            <div style={{ fontSize: '0.72rem', color: 'var(--muted)', marginBottom: 8, fontFamily: "var(--font-cinzel), serif", letterSpacing: '0.08em' }}>INCLUDED EXPERIENCES</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
               {tripData.experiences.map((exp) => <span key={exp} className="tag tag-g">{exp}</span>)}
             </div>

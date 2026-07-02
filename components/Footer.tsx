@@ -22,7 +22,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="footer-logo">
         <LogoSeal size={32} />
-        <div style={{ fontFamily: "'Cinzel', serif", fontSize: '0.9rem', color: 'var(--sand)', letterSpacing: '0.1em' }}>
+        <div style={{ fontFamily: "var(--font-cinzel), serif", fontSize: '0.9rem', color: 'var(--sand)', letterSpacing: '0.1em' }}>
           CONA<br />
           <span style={{ fontSize: '0.5rem', color: 'var(--gold)', letterSpacing: '0.2em' }}>ADVENTURES</span>
         </div>
