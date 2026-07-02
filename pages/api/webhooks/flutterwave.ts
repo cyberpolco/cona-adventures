@@ -1,12 +1,28 @@
-// pages/api/webhooks/flutterwave.js
+// pages/api/webhooks/flutterwave.ts
 // Authoritative confirmation, independent of the browser redirect.
 // 1) Reject if verif-hash header doesn't match our dashboard secret.
 // 2) Re-verify the transaction server-side.
 // 3) Mark the booking paid — idempotently.
-import { webhookSignatureValid, verifyTransaction, expectedAmountFromMeta, paymentIsValid } from '../../../lib/flutterwave.server';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import {
+  webhookSignatureValid,
+  verifyTransaction,
+  expectedAmountFromMeta,
+  paymentIsValid,
+  type FlutterwaveTransactionData,
+} from '../../../lib/flutterwave.server';
 import { markBookingPaid } from '../../../lib/bookings.server';
 
-export default async function handler(req, res) {
+interface FlutterwaveWebhookEvent {
+  event?: string;
+  data?: FlutterwaveTransactionData;
+}
+
+interface WebhookApiRequest extends NextApiRequest {
+  body: FlutterwaveWebhookEvent;
+}
+
+export default async function handler(req: WebhookApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).end();
 
   if (!webhookSignatureValid(req.headers['verif-hash'])) {
@@ -21,7 +37,8 @@ export default async function handler(req, res) {
     if (event?.event === 'charge.completed' && event?.data?.status === 'successful') {
       const result = await verifyTransaction(event.data.id);
       const d = result?.data;
-      const expected = { amount: expectedAmountFromMeta(d?.meta), currency: d?.currency };
+      if (!d) return;
+      const expected = { amount: expectedAmountFromMeta(d.meta), currency: d.currency };
       if (paymentIsValid(d, expected)) {
         await markBookingPaid({
           conaRef:       d.meta?.cona_ref || d.tx_ref,

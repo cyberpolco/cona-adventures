@@ -1,11 +1,12 @@
-// pages/api/payments/verify.js
+// pages/api/payments/verify.ts
 // Called by the return page. Re-queries Flutterwave for the final status and
 // checks the amount against a SERVER recomputation — redirect params are never trusted.
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { verifyTransaction, expectedAmountFromMeta, paymentIsValid } from '../../../lib/flutterwave.server';
 import { markBookingPaid } from '../../../lib/bookings.server';
 
-export default async function handler(req, res) {
-  const { transaction_id } = req.query;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const transaction_id = Array.isArray(req.query.transaction_id) ? req.query.transaction_id[0] : req.query.transaction_id;
   if (!transaction_id) return res.status(400).json({ ok: false, error: 'Missing transaction_id' });
 
   try {

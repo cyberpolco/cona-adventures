@@ -1,14 +1,25 @@
-// pages/api/checkout.js
+// pages/api/checkout.ts
 // Server-side checkout. The browser sends trip selections only. We recompute
 // the amount here, then ask Flutterwave for a hosted-checkout link (card data
 // entered on Flutterwave's page — PCI SAQ A).
 // When Flutterwave keys are absent we fall back to mock mode for local dev.
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { estimatePrice, depositOf } from '../../lib/pricing';
 import { flwConfigured, initPayment } from '../../lib/flutterwave.server';
 import { prisma } from '../../lib/prisma';
 import { CONSENT_VERSION, isMinorAtTravel, computeRetainUntil } from '../../lib/pii.server';
+import type { TripSelection, PayType } from '../../types/booking';
 
-export default async function handler(req, res) {
+interface CheckoutApiRequest extends NextApiRequest {
+  body: { tripData?: TripSelection; payType?: PayType };
+}
+
+type CheckoutResponse =
+  | { error: string }
+  | { ok: true; mock: true; ref: string; price: number; dueNow: number }
+  | { ok: true; url: string; tx_ref: string; ref: string };
+
+export default async function handler(req: CheckoutApiRequest, res: NextApiResponse<CheckoutResponse>) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { tripData, payType } = req.body || {};
@@ -90,7 +101,7 @@ export default async function handler(req, res) {
     });
     console.log(`[checkout] ref=${ref} travelers=${travelers.length} consent=${CONSENT_VERSION}`);
   } catch (e) {
-    console.error('Booking persist failed:', e.message);
+    console.error('Booking persist failed:', (e as Error).message);
   }
 
   // Dev fallback — no gateway keys → keep mock flow, no card data.

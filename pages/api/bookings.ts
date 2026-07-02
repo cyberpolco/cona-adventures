@@ -1,18 +1,20 @@
-// pages/api/bookings.js
+// pages/api/bookings.ts
 // Admin/Ops read-only endpoint — lists all bookings for the dashboard.
 // Guarded server-side by session role; never trust the client.
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from './auth/[...nextauth]';
 import { prisma } from '../../lib/prisma';
 import { redactTraveler } from '../../lib/pii.server';
+import { ROLES, type Role } from '../../lib/auth';
 
-const ALLOWED = ['Super Admin', 'Operations Manager'];
+const ALLOWED: Role[] = [ROLES.ADMIN, ROLES.OPS];
 
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).end();
 
   const session = await getServerSession(req, res, authOptions);
-  if (!session || !ALLOWED.includes(session.user?.role)) {
+  if (!session?.user || !ALLOWED.includes(session.user.role)) {
     return res.status(403).json({ error: 'Forbidden' });
   }
 
