@@ -32,6 +32,12 @@ const SECURITY_HEADERS = [
 
 const nextConfig = {
   reactStrictMode: true,
+  images: {
+    // Serves AVIF first, falls back to WebP, then original — protects LCP once
+    // real photography replaces the emoji placeholders. No remotePatterns yet
+    // since there are no external image hosts in use.
+    formats: ['image/avif', 'image/webp'],
+  },
   async headers() {
     return [
       {
