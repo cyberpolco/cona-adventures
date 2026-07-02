@@ -18,7 +18,7 @@ export default function HomePage() {
   const { t, lang } = useApp();
   const router = useRouter();
 
-  function selectCountry(country) {
+  function selectCountry(country: string) {
     mergeTripData({ country });
     router.push(`/${lang}/plan`);
   }

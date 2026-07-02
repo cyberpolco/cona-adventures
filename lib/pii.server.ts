@@ -1,8 +1,6 @@
 // lib/pii.server.ts — SERVER ONLY.
 // PII policy: retention rules, minor detection, field-level redaction by role.
-import { ROLES } from './auth';
-
-type Role = (typeof ROLES)[keyof typeof ROLES];
+import { ROLES, type Role } from './roles';
 
 export const CONSENT_VERSION = 'v1-2026-07';
 

@@ -6,7 +6,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from './auth/[...nextauth]';
 import { prisma } from '../../lib/prisma';
 import { redactTraveler } from '../../lib/pii.server';
-import { ROLES, type Role } from '../../lib/auth';
+import { ROLES, type Role } from '../../lib/roles';
 
 const ALLOWED: Role[] = [ROLES.ADMIN, ROLES.OPS];
 

@@ -1,15 +1,24 @@
 'use client';
-// components/AfricaMap.js
+// components/AfricaMap.tsx
 // D3-powered SVG map. Loads TopoJSON from CDN via useEffect (client only).
 import { useEffect, useRef, useState } from 'react';
+import type { Feature, Geometry } from 'geojson';
 import { useApp } from '../context/AppContext';
+
+export type Country = 'congo' | 'namibia' | 'both';
+
+// topojson-specification is unpublished; declare just the shape this component reads.
+interface WorldTopology {
+  type: 'Topology';
+  objects: { countries: unknown };
+}
 
 const CONGO_ID  = 180; // DR Congo ISO numeric
 const NAMIBIA_ID = 516;
 
-export default function AfricaMap({ onCountrySelect }) {
-  const svgRef = useRef(null);
-  const tooltipRef = useRef(null);
+export default function AfricaMap({ onCountrySelect }: { onCountrySelect?: (country: Country) => void }) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
   const { t } = useApp();
   const [mounted, setMounted] = useState(false);
 
@@ -42,9 +51,10 @@ export default function AfricaMap({ onCountrySelect }) {
 
       const path = d3.geoPath().projection(projection);
 
-      let world;
+      let world: WorldTopology | undefined;
       try {
-        world = await d3.json('/world-110m.json');
+        world = await d3.json<WorldTopology>('/world-110m.json');
+        if (!world) throw new Error('empty topology response');
       } catch {
         // Fallback: render placeholder text
         svg.append('text')
@@ -58,7 +68,10 @@ export default function AfricaMap({ onCountrySelect }) {
 
       if (cancelled) return;
 
-      const countries = topojson.feature(world, world.objects.countries);
+      type CountryFeature = Feature<Geometry, { [name: string]: unknown }>;
+      const countries = topojson.feature(world as never, world.objects.countries as never) as unknown as {
+        features: CountryFeature[];
+      };
 
       // Africa bounding box filter (rough lat/lon)
       const africaFeatures = countries.features.filter((f) => {
@@ -70,7 +83,7 @@ export default function AfricaMap({ onCountrySelect }) {
         }
       });
 
-      const highlights = {
+      const highlights: Record<number, { label: string; color: string; hover: string }> = {
         [CONGO_ID]:   { label: '🌿 DR Congo',  color: '#2C7A70', hover: '#3a9a90' },
         [NAMIBIA_ID]: { label: '🏜 Namibia',   color: '#C0532F', hover: '#e06040' },
       };
@@ -79,13 +92,13 @@ export default function AfricaMap({ onCountrySelect }) {
         .data(africaFeatures)
         .enter()
         .append('path')
-        .attr('d', path)
-        .attr('fill', (d) => highlights[d.id]?.color ?? '#1a2a1e')
+        .attr('d', path as never)
+        .attr('fill', (d: CountryFeature) => highlights[Number(d.id)]?.color ?? '#1a2a1e')
         .attr('stroke', '#2a3f2e')
         .attr('stroke-width', 0.5)
-        .style('cursor', (d) => highlights[d.id] ? 'pointer' : 'default')
-        .on('mouseover', function (event, d) {
-          const info = highlights[d.id];
+        .style('cursor', (d: CountryFeature) => highlights[Number(d.id)] ? 'pointer' : 'default')
+        .on('mouseover', function (event: MouseEvent, d: CountryFeature) {
+          const info = highlights[Number(d.id)];
           if (!info) return;
           d3.select(this).attr('fill', info.hover);
           const tooltip = tooltipRef.current;
@@ -96,23 +109,23 @@ export default function AfricaMap({ onCountrySelect }) {
             tooltip.style.top  = `${event.offsetY - 10}px`;
           }
         })
-        .on('mousemove', function (event) {
+        .on('mousemove', function (event: MouseEvent) {
           const tooltip = tooltipRef.current;
           if (tooltip && tooltip.style.opacity === '1') {
             tooltip.style.left = `${event.offsetX + 12}px`;
             tooltip.style.top  = `${event.offsetY - 10}px`;
           }
         })
-        .on('mouseout', function (event, d) {
-          const info = highlights[d.id];
+        .on('mouseout', function (event: MouseEvent, d: CountryFeature) {
+          const info = highlights[Number(d.id)];
           if (!info) return;
           d3.select(this).attr('fill', info.color);
           const tooltip = tooltipRef.current;
           if (tooltip) tooltip.style.opacity = '0';
         })
-        .on('click', (event, d) => {
-          if (d.id === CONGO_ID)   onCountrySelect?.('congo');
-          if (d.id === NAMIBIA_ID) onCountrySelect?.('namibia');
+        .on('click', (event: MouseEvent, d: CountryFeature) => {
+          if (Number(d.id) === CONGO_ID)   onCountrySelect?.('congo');
+          if (Number(d.id) === NAMIBIA_ID) onCountrySelect?.('namibia');
         });
     }
 

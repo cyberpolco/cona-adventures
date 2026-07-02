@@ -1,5 +1,5 @@
 'use client';
-// components/LoginModal.js
+// components/LoginModal.tsx
 // SECURE login: credentials are verified on the server (NextAuth), and the
 // role comes back FROM the server inside the session. The old role-picker
 // (which let anyone click "Super Admin") has been removed — that was the
@@ -8,12 +8,15 @@ import { useState } from 'react';
 import { signIn, getSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useApp } from '../context/AppContext';
+import { ROLES, type Role } from '../lib/roles';
 
-// Demo staff accounts (seed in lib/users.server.js) — password: ChangeMe!2026
+// Demo staff accounts (seed in lib/users.server.ts) — password: ChangeMe!2026
 //   admin@cona.com (Super Admin) · ops@cona.com (Operations Manager)
 //   guide@cona.com (Tour Guide)  · driver@cona.com (Driver)
 
-function SignInForm({ onSignup }) {
+const STAFF: Role[] = [ROLES.ADMIN, ROLES.OPS, ROLES.GUIDE, ROLES.DRIVER];
+
+function SignInForm({ onSignup }: { onSignup: () => void }) {
   const router = useRouter();
   const { closeLogin, showToast } = useApp();
   const [email, setEmail] = useState('');
@@ -30,8 +33,7 @@ function SignInForm({ onSignup }) {
     const session = await getSession();          // role is decided by the server
     const role = session?.user?.role;
     closeLogin();
-    const STAFF = ['Super Admin', 'Operations Manager', 'Tour Guide', 'Driver'];
-    if (STAFF.includes(role)) {
+    if (role && STAFF.includes(role)) {
       router.push('/dashboard');                 // all staff → guarded dashboard
     } else {
       showToast(`Welcome back, ${session?.user?.name?.split(' ')[0] || ''}.`);
@@ -76,7 +78,7 @@ function SignInForm({ onSignup }) {
   );
 }
 
-function SignupForm({ onBack }) {
+function SignupForm({ onBack }: { onBack: () => void }) {
   const { closeLogin, showToast } = useApp();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -115,7 +117,7 @@ function SignupForm({ onBack }) {
 
 export default function LoginModal() {
   const { loginOpen, closeLogin, t } = useApp();
-  const [view, setView] = useState('signin'); // signin | signup
+  const [view, setView] = useState<'signin' | 'signup'>('signin');
 
   if (!loginOpen) return null;
 

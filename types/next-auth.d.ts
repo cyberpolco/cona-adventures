@@ -1,6 +1,4 @@
-import { ROLES } from '../lib/auth';
-
-type Role = (typeof ROLES)[keyof typeof ROLES];
+import type { Role } from '../lib/roles';
 
 declare module 'next-auth' {
   interface User {

@@ -4,7 +4,7 @@
 // before the first migration).
 import bcrypt from 'bcryptjs';
 import { prisma } from './prisma';
-import type { Role } from './auth';
+import type { Role } from './roles';
 
 export interface SafeUser {
   id: string;

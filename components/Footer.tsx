@@ -3,14 +3,15 @@ import { useSession } from 'next-auth/react';
 import { useRouter }  from 'next/navigation';
 import { useApp }     from '../context/AppContext';
 import LogoSeal       from './LogoSeal';
+import { ROLES, type Role } from '../lib/roles';
 
-const STAFF_ROLES = ['Super Admin', 'Operations Manager', 'Tour Guide', 'Driver'];
+const STAFF_ROLES: Role[] = [ROLES.ADMIN, ROLES.OPS, ROLES.GUIDE, ROLES.DRIVER];
 
 export default function Footer() {
   const { openLogin, lang } = useApp();
   const { data: session } = useSession();
   const router  = useRouter();
-  const isStaff = STAFF_ROLES.includes(session?.user?.role);
+  const isStaff = session?.user ? STAFF_ROLES.includes(session.user.role) : false;
 
   const handleDashboard = () => {
     if (isStaff) router.push('/dashboard');

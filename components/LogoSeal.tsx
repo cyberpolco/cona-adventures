@@ -1,5 +1,5 @@
-// components/LogoSeal.js
-export default function LogoSeal({ size = 44 }) {
+// components/LogoSeal.tsx
+export default function LogoSeal({ size = 44 }: { size?: number }) {
   return (
     <svg
       width={size}

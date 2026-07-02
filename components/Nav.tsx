@@ -4,25 +4,26 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useApp } from '../context/AppContext';
 import LogoSeal from './LogoSeal';
+import { ROLES, type Role } from '../lib/roles';
 
-const STAFF_ROLES = ['Super Admin', 'Operations Manager', 'Tour Guide', 'Driver'];
+const STAFF_ROLES: Role[] = [ROLES.ADMIN, ROLES.OPS, ROLES.GUIDE, ROLES.DRIVER];
 
 export default function Nav() {
   const { t, lang, openLogin } = useApp();
   const { data: session } = useSession();
   const router   = useRouter();
-  const pathname = usePathname();
+  const pathname = usePathname() ?? '';
   const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef  = useRef(null);
+  const menuRef  = useRef<HTMLDivElement>(null);
 
-  const isStaff = STAFF_ROLES.includes(session?.user?.role);
+  const isStaff = session?.user ? STAFF_ROLES.includes(session.user.role) : false;
 
   // Close menu on outside click or Escape
   useEffect(() => {
     if (!menuOpen) return;
-    function handleKey(e) { if (e.key === 'Escape') setMenuOpen(false); }
-    function handleClick(e) {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+    function handleKey(e: KeyboardEvent) { if (e.key === 'Escape') setMenuOpen(false); }
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
     }
     document.addEventListener('keydown', handleKey);
     document.addEventListener('mousedown', handleClick);
@@ -34,7 +35,7 @@ export default function Nav() {
 
   function close() { setMenuOpen(false); }
 
-  function handleLink(href) {
+  function handleLink(href: string) {
     close();
     if (href === '#experiences') {
       if (!pathname.match(/^\/(en|fr)\/?$/)) {
@@ -48,13 +49,13 @@ export default function Nav() {
     router.push(`/${lang}${href}`);
   }
 
-  function switchLang(newLang) {
+  function switchLang(newLang: string) {
     // /en/gallery → /fr/gallery; /en → /fr
     const newPath = pathname.replace(/^\/(en|fr)/, `/${newLang}`);
     router.push(newPath.startsWith(`/${newLang}`) ? newPath : `/${newLang}`);
   }
 
-  function isActive(href) {
+  function isActive(href: string) {
     const base = `/${lang}${href}`;
     if (href === '/') return pathname === `/${lang}` || pathname === `/${lang}/`;
     return pathname.startsWith(base);

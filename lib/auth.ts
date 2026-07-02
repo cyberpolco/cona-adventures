@@ -1,20 +1,12 @@
-// lib/auth.ts
-// Shared role constants + a server-side route guard for getServerSideProps.
+// lib/auth.ts — SERVER ONLY. Never import from a client component; import
+// lib/roles.ts instead for just the ROLES constants (no next-auth/Prisma deps).
 import type { GetServerSidePropsContext } from 'next';
 import { getServerSession } from 'next-auth/next';
 import type { Session } from 'next-auth';
 import { authOptions } from './authOptions';
+import { ROLES, type Role } from './roles';
 
-export const ROLES = {
-  ADMIN:   'Super Admin',
-  OPS:     'Operations Manager',
-  GUIDE:   'Tour Guide',
-  DRIVER:  'Driver',
-  PARTNER: 'Hotel Partner',
-  CLIENT:  'Client',
-} as const;
-
-export type Role = (typeof ROLES)[keyof typeof ROLES];
+export { ROLES, type Role };
 
 type RequireRoleResult =
   | { redirect: { destination: string; permanent: boolean }; props?: never }

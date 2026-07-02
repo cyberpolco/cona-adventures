@@ -10,7 +10,14 @@ const GUIDES = [
   { id: 4, name: 'Anika Swartz',    country: '🏜 Namibia', specialty: 'Desert & Self-Drive', initials: 'AS', color: '#1a0800', textColor: '#E5A23C' },
 ];
 
-function StarRating({ guideId, value, onChange, submitted }) {
+interface StarRatingProps {
+  guideId: number;
+  value: number;
+  onChange: (value: number) => void;
+  submitted: boolean;
+}
+
+function StarRating({ guideId, value, onChange, submitted }: StarRatingProps) {
   const [hovered, setHovered] = useState(0);
 
   return (
@@ -35,14 +42,14 @@ function StarRating({ guideId, value, onChange, submitted }) {
 
 export default function GuideRatings() {
   const { t, showToast } = useApp();
-  const [ratings, setRatings] = useState({});
-  const [submitted, setSubmitted] = useState({});
+  const [ratings, setRatings] = useState<Record<number, number>>({});
+  const [submitted, setSubmitted] = useState<Record<number, boolean>>({});
 
-  function handleRate(guideId, value) {
+  function handleRate(guideId: number, value: number) {
     setRatings((r) => ({ ...r, [guideId]: value }));
   }
 
-  function handleSubmit(guideId) {
+  function handleSubmit(guideId: number) {
     if (!ratings[guideId]) {
       showToast('Please select a star rating first.');
       return;
