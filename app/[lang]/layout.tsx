@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 import Providers from '../../components/Providers';
 import { LOCALES } from '../../lib/i18n';
 import { SITE_URL } from '../../lib/siteUrl';
@@ -8,12 +10,12 @@ export function generateStaticParams() {
 
 const SITE_NAME = 'CoNa Adventures';
 
-const DESCS = {
+const DESCS: Record<string, string> = {
   en: 'Guided expeditions through the rainforests of DR Congo and the dunes of Namibia. Africa awaits.',
   fr: "Expéditions guidées à travers les forêts du Congo et les dunes de Namibie. L'Afrique vous attend.",
 };
 
-export async function generateMetadata({ params }) {
+export async function generateMetadata({ params }: { params: { lang: string } }): Promise<Metadata> {
   const { lang } = params;
   const isFr = lang === 'fr';
   const desc = DESCS[lang] ?? DESCS.en;
@@ -53,6 +55,6 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default function LangLayout({ children, params }) {
+export default function LangLayout({ children }: { children: ReactNode }) {
   return <Providers>{children}</Providers>;
 }

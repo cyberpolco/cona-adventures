@@ -1,17 +1,19 @@
+import type { Metadata, Viewport } from 'next';
+import type { ReactNode } from 'react';
 import '../styles/globals.css';
 import { SITE_URL } from '../lib/siteUrl';
 
 // Minimal root layout — just the HTML shell and fonts.
-// All page-level metadata lives in app/[lang]/layout.js.
-export const metadata = {
+// All page-level metadata lives in app/[lang]/layout.tsx.
+export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
 };
 
-export const viewport = {
+export const viewport: Viewport = {
   themeColor: '#0e1a12',
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>

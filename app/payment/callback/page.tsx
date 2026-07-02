@@ -4,14 +4,26 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
+interface VerifyData {
+  ok: boolean;
+  ref?: string;
+  amount?: number;
+  currency?: string;
+  error?: string;
+}
+
+type CallbackState =
+  | { loading: true }
+  | { loading: false; ok: boolean; data?: VerifyData; msg?: string };
+
 function CallbackInner() {
   const router       = useRouter();
   const searchParams = useSearchParams();
-  const [s, setS]    = useState({ loading: true });
+  const [s, setS]    = useState<CallbackState>({ loading: true });
 
   useEffect(() => {
-    const status         = searchParams.get('status');
-    const transaction_id = searchParams.get('transaction_id');
+    const status         = searchParams?.get('status');
+    const transaction_id = searchParams?.get('transaction_id');
 
     if (status === 'cancelled' || status === 'failed' || !transaction_id) {
       setS({ loading: false, ok: false, msg: 'Your payment was not completed.' });
@@ -33,10 +45,10 @@ function CallbackInner() {
             <div style={{ fontSize: '2.4rem', marginBottom: 10 }} aria-hidden="true">✅</div>
             <h2 style={{ fontFamily: "'Cinzel', serif", color: 'var(--sand)', marginBottom: 8 }}>Booking confirmed</h2>
             <p style={{ color: 'var(--muted)', marginBottom: 6 }}>
-              Reference <strong style={{ color: 'var(--gold)' }}>{s.data.ref}</strong>
+              Reference <strong style={{ color: 'var(--gold)' }}>{s.data?.ref}</strong>
             </p>
             <p style={{ color: 'var(--muted)', marginBottom: 20 }}>
-              Paid: {s.data.currency} {Number(s.data.amount).toLocaleString()}
+              Paid: {s.data?.currency} {Number(s.data?.amount).toLocaleString()}
             </p>
             <button className="btn btn-primary" onClick={() => router.push('/')}>Back to Home</button>
           </>
