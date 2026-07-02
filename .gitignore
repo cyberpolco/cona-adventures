@@ -16,6 +16,10 @@ out/
 *.db-journal
 prisma/migrations/
 
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
 # misc
 .DS_Store
 *.pem
